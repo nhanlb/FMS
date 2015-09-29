@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:pm="http://primefaces.org/mobile">
+
+    <f:view renderKitId="PRIMEFACES_MOBILE" />
+    <h:head>
+        <title>SmartSale</title>
+        <link rel="Shortcut Icon" href="#{request.contextPath}/resources/images/favico.ico" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/ts-mobile-ui.css" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/jquery.mobile.icons.min.css" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/mlogin-layout.css" />
+    </h:head>
+
+    <h:body>
+        <pm:page id="page_login">      
+            <pm:content>
+                <h:form id="form_login">
+                    <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
+                    <div id="page-header" >
+                        TLS ADMIN
+                    </div>
+                    <hr style="width: 90%" />
+
+                    <p:spacer height="20" />
+
+                    <p:panelGrid id="pnl_input_login" columns="1">
+                        <p:spacer />
+                        <p:inputText styleClass="has-uppercase" requiredMessage="Chưa nhập tài khoản" value="#{secuser.username}" id="username" required="true" label="Tài khoản" tabindex="1" >
+                            <pe:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+                        </p:inputText>                        
+                        <p:password requiredMessage="Chưa nhập mật khẩu" value="#{secuser.password}" id="password" required="true" label="Mật khẩu" tabindex="2" />
+                        <p:selectBooleanCheckbox rendered="#{secuser.enableTOS}" tabindex="4" itemLabel="Tôi đồng ý với các điều khoản sủ dụng" value="#{secuser.mbAcceptRuler}" style="width: 100%" />
+                    </p:panelGrid>
+
+                    <div id="btn-login">
+                        <p:commandButton action="#{secuser.validateUser()}" value="Đăng nhập" id="login_button" tabindex="5" process="form_login" update="form_login" />                            
+                    </div>
+
+                    <p:watermark for="username" value="TÊN ĐĂNG NHẬP" />
+                    <p:watermark for="password" value="MẬT KHẨU" />
+                </h:form>  
+            </pm:content>
+        </pm:page>
+    </h:body>
+</html>

@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_SPECIALOBJECT.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel id="panel_specialObject" header="#{PP_SPECIALOBJECT.specialObject}" styleClass="pnl-red" style=" margin-bottom: 10px;" >
+                        <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                            <p:outputLabel for="specialObjectName" value="#{PP_SPECIALOBJECT.specialObjectName}" />
+                            <p:inputText id="specialObjectName" value="#{specialObjectController.specialObject.specialObjectName}" disabled="#{specialObjectController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_req_specialObjectName}" maxlength="150">
+                            </p:inputText>
+                            <p:outputLabel for="startDate" value="#{PP_SPECIALOBJECT.startDate}" />
+                            <p:calendar id="startDate" pattern="dd/MM/yyyy" value="#{specialObjectController.specialObject.startDate}" 
+                                        converterMessage="#{specialObjectController.msg_Convert_startdate}"
+                                        required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_cvert_date}"
+                                        styleClass="hasDatepicker" navigator="true" disabled="#{specialObjectController.isDISABLE}">
+                                <!--<p:ajax event="dateSelect" update="endDate" />-->
+                            </p:calendar>
+                            <p:outputLabel for="endDate" value="#{PP_SPECIALOBJECT.endDate}" />
+                            <p:calendar id="endDate" pattern="dd/MM/yyyy" value="#{specialObjectController.specialObject.endDate}" 
+                                        converterMessage="#{specialObjectController.msg_Convert_endDate}"
+                                        required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_cvert_date}"
+                                        mindate="#{specialObjectController.specialObject.startDate}"
+                                        styleClass="hasDatepicker" navigator="true" disabled="#{specialObjectController.isDISABLE}">
+
+                            </p:calendar>
+                            <p:outputLabel for="decisionNum" value="#{PP_SPECIALOBJECT.decisionNum}" />
+                            <p:inputText id="decisionNum" value="#{specialObjectController.specialObject.decisionNum}" disabled="#{specialObjectController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_req_decisionNum}" maxlength="50">
+                            </p:inputText>
+                            
+                            <p:outputLabel for="decisionDate" value="#{PP_SPECIALOBJECT.decisionDate}" />
+                            <p:calendar id="decisionDate" pattern="dd/MM/yyyy" value="#{specialObjectController.specialObject.decisionDate}" 
+                                        converterMessage="#{specialObjectController.msg_Convert_endDate}"
+                                        required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_cvert_date}"
+                                        styleClass="hasDatepicker" navigator="true" disabled="#{specialObjectController.isDISABLE}">
+
+                            </p:calendar>
+
+                            <p:outputLabel for="decisionDept" value="#{PP_SPECIALOBJECT.decisionDept}" />
+                            <pe:inputNumber id="decisionDept" value="#{specialObjectController.specialObject.decisionDept}"
+                                            required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_req_allowance}" maxlength="10"
+                                            decimalPlaces="0" disabled="#{specialObjectController.isDISABLE}" decimalSeparator="," thousandSeparator=".">
+
+                            </pe:inputNumber>
+                            
+                            <p:outputLabel for="decisionSigner" value="#{PP_SPECIALOBJECT.decisionSigner}" />
+                            <p:inputText maxlength="150" id="decisionSigner"
+                                         value="#{specialObjectController.specialObject.decisionSigner}"
+                                         disabled="#{specialObjectController.isDISABLE}"
+                                         required="true"
+                                         requiredMessage="#{PP_SPECIALOBJECT.msg_req_decisionSigner}"/>
+                            <p:outputLabel for="decisionDocId" value="#{PP_SPECIALOBJECT.decisionDocId}" />
+                            <pe:inputNumber id="decisionDocId" value="#{specialObjectController.specialObject.decisionDocId}"
+                                            required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_req_decisionDocId}" maxlength="10"
+                                            decimalPlaces="0" disabled="#{specialObjectController.isDISABLE}" decimalSeparator="," thousandSeparator=".">
+                            </pe:inputNumber>
+                            
+                            <p:outputLabel for="description" value="#{PP_SPECIALOBJECT.description}" />
+                            <p:inputText maxlength="200" id="description"
+                                         value="#{specialObjectController.specialObject.description}"
+                                         disabled="#{specialObjectController.isDISABLE}"/>
+                            <p:outputLabel for="status" value="#{PP_SPECIALOBJECT.status}" />
+                            <p:selectOneMenu id="status" value="#{specialObjectController.specialObject.status}" disabled="#{specialObjectController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_SPECIALOBJECT.msg_req_status}">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                            </p:selectOneMenu>
+          
+                        </p:panelGrid>
+                        <p:focus context=":form_main:panel_specialObject" />
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not specialObjectController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_add"/>
+                                <p:commandButton id="btn_add" rendered="#{specialObjectController.getPermission('I')}" actionListener="#{specialObjectController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tblEthnics').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{specialObjectController.getPermission('I')}" actionListener="#{specialObjectController.changeStateCopy()}" disabled="#{not specialObjectController.isSelectedApp}" process="@this" onclick="PF('tblEthnics').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{specialObjectController.getPermission('U')}" actionListener="#{specialObjectController.changeStateEdit()}" disabled="#{not specialObjectController.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{specialObjectController.getPermission('D')}" actionListener="#{specialObjectController.changeStateDel()}" disabled="#{not specialObjectController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{specialObjectController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_ok"/>
+                                <p:commandButton id="btn_ok" actionListener="#{specialObjectController.handOK()}" process="@this :form_main:panel_specialObject" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{specialObjectController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_specialObject" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_SPECIALOBJECT.specialObject_list}" styleClass="pnl-blue" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_specialObject" widgetVar="tblSpecialObject" value="#{specialObjectController.lstSpecialObject}" var="specialObject"
+                                     filteredValue="#{specialObjectController.lstSpecialObjectFiltered}"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{specialObjectController.isDisplayBtnConfirm}" selectionMode="single"
+                                     rowKey="#{specialObject.specialObjectId}" selection="#{specialObjectController.mselectedSpecialObject}" rowIndexVar="stt"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="(Bản ghi thứ: {startRecord} - {endRecord} trong {totalRecords}, Trang {currentPage}/{totalPages})"
+                                     rowsPerPageTemplate="5,10,15,#{specialObjectController.lstSpecialObject.size()}" paginator="true" rows="10" >
+
+                            <p:ajax event="rowSelect" process="@this" listener="#{specialObjectController.onRowSelect}" update=":form_main:panel_specialObject" />
+                            
+                            <p:column headerText="STT">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{PP_SPECIALOBJECT.specialObjectName}" filterBy="#{specialObject.specialObjectName}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.specialObjectName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.startDate}" filterBy="#{specialObject.startDate}" filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.startDateView}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.endDate}" filterBy="#{specialObject.endDate}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.endDateView}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.decisionNum}" filterBy="#{specialObject.decisionNum}" filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.decisionNum}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.decisionDate}" filterBy="#{specialObject.decisionDate}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.decisionDateView}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SPECIALOBJECT.decisionDept}" filterBy="#{specialObject.decisionDept}" filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.decisionDept}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.decisionSigner}" filterBy="#{specialObject.decisionSigner}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.decisionSigner}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SPECIALOBJECT.decisionDocId}" filterBy="#{specialObject.decisionDocId}" filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.decisionDocId}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.description}" filterBy="#{specialObject.description}" 
+                                      filterMatchMode="contains" >
+                                <h:outputText value="#{specialObject.description}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SPECIALOBJECT.status}" sortBy="#{specialObject.status}" filterBy="#{specialObject.status}"
+                                      filterMatchMode="contains" width="150" >
+                                <f:facet name="filter" >
+                                    <p:selectOneMenu onchange="PF('tblSpecialObject').filter();" style="float: left !important;">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText styleClass="lbl-green" rendered="#{specialObject.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{specialObject.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" appendTo=":form_main" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{specialObjectController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tblEthnics').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>

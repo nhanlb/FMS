@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css">
+                td {
+                    vertical-align: top !important;
+                }
+
+                .ui-editor {
+                    width: 100% !important;
+                }
+
+                .col1 {
+                    width: 20%;
+                }
+
+                .col2 {
+                    width: 80%;
+                }
+
+                .ui-filter-column {
+                    -moz-box-shadow: inset 0px 1px 0px transparent;
+                    -webkit-box-shadow: inset 0px 1px 0px transparent;
+                    box-shadow: inset 0px 1px 0px transparent;
+                }
+            </style>
+
+            <h:panelGrid columns="2" style="width: 100%" columnClasses="col1,col2">
+                <p:dataTable scrollable="true" scrollHeight="465" liveScroll="true" scrollRows="50" id="dtfile" value="#{systemlog.listFile}"
+                             selectionMode="single" var="file" rowKey="#{file}" style="width: 100%;">
+
+                    <p:ajax event="rowSelect" update=":form_main" listener="#{systemlog.onFileRowSelect}"/>
+
+                    <p:column filterBy="#{file}" filterMatchMode="contains" filterStyle="width: 100%;" style="border: 0;">
+                        #{file}
+                    </p:column>
+                </p:dataTable>
+                <p:editor disabled="true" id="econtent" controls="" height="500" value="#{systemlog.mstrLogContent}"/>
+            </h:panelGrid>
+
+            <div align="center" style="padding-top:1% ">
+                <p:commandButton icon="ui-icon-trash" id="cmddelete" style="width:120px !important" rendered="#{systemlog.blIsDelete}" ajax="true" onclick="PF('confirmationDelLog').show()" value="#{PP_SYSTEMLOG.clean}"/>
+            </div>
+
+            <p:confirmDialog rendered="#{systemlog.blIsDelete}" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmationDelLog">
+                <p:commandButton style="width:100px;" icon="ui-icon ui-icon-circle-check" process="@this" id="confirm" value="#{PP_SHARED.ok}" oncomplete="PF('confirmationDelLog').hide()" update=":form_main :grow_main_dt" actionListener="#{systemlog.handCleanLog()}" />
+                <p:commandButton icon="ui-icon-circle-close" styleClass="back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmationDelLog').hide()" type="button" />
+            </p:confirmDialog>
+        </ui:composition>
+    </h:body>
+</html>

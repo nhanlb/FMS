@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <script type="text/javascript" >
+                $(window).load(function() {
+                    $(".hasDatepicker").mask("99/99/9999 99:99:99");
+                });
+            </script>
+
+            <style type="text/css" >
+                .col1, .col3, .col5 {
+                    width: 15%;
+                }
+
+                .col2, .col4, .col6 {
+                    width: 20%;
+                }                
+            </style>
+
+            <p:panel header="#{PP_LOGACCESS.filtercondition}" >
+                <p:panelGrid id="pncondition" columns="6" columnClasses="col1,col2,col3,col4,col5,col6" style="width:100% !important; margin-bottom: 10px;">
+                    <h:outputText value="#{PP_LOGACCESS.from}" />
+                    <p:calendar pattern="dd/MM/yyyy HH:mm:ss" navigator="true" value="#{logaccess.ettLogAccessGUI.ettFilterCond.dateFrom}" />
+                    <h:outputText value="#{PP_LOGACCESS.to}" styleClass="column-margin" />
+                    <p:calendar pattern="dd/MM/yyyy HH:mm:ss" navigator="true" value="#{logaccess.ettLogAccessGUI.ettFilterCond.dateTo}" />
+
+                    <h:outputText value="#{PP_LOGACCESS.user}" styleClass="column-margin" />
+                    <p:selectOneMenu filter="true" filterMatchMode="contains" value="#{logaccess.ettLogAccessGUI.ettFilterCond.strUserName}" >
+                        <f:selectItem itemLabel="" itemValue=""/>
+                        <f:selectItems value="#{logaccess.listUser}" var="user" itemValue="#{user.user.userName}" itemLabel="#{user.user.fullName}"/>                                    
+                    </p:selectOneMenu>
+                    <h:outputText value="#{PP_MNGAPP.app_name}" />
+                    <p:selectOneMenu id="app" value="#{logaccess.ettLogAccessGUI.ettFilterCond.strAppId}" filter="true" filterMatchMode="contains" >
+                        <f:selectItem itemLabel="" itemValue="" />  
+                        <f:selectItems value="#{logaccess.mlistApp}" var="app" itemLabel="#{app.name}" itemValue="#{app.appId}" />
+                        <p:ajax global="false" event="change" listener="#{logaccess.onAppChange}" update=":form_main:module" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="#{PP_LOGACCESS.function}" />
+                    <p:selectOneMenu filter="true" filterMatchMode="contains" id="module" value="#{logaccess.ettLogAccessGUI.ettFilterCond.strFunctionPath}">
+                        <f:selectItem itemLabel="" itemValue=""/>
+                        <f:selectItems value="#{logaccess.listModule}" var="module" itemLabel="#{module.name}" itemValue="#{module.objectId}" />
+                    </p:selectOneMenu>                
+                    <h:outputText value="#{PP_LOGACCESS.number}" styleClass="column-margin"/>
+                    <p:selectOneMenu value="#{logaccess.ettLogAccessGUI.ettFilterCond.strNumberAccess}">
+                        <f:selectItem itemLabel="" itemValue="0"/>
+                        <f:selectItem itemLabel=">= 10" itemValue="10"/>
+                        <f:selectItem itemLabel=">= 50" itemValue="50"/>
+                        <f:selectItem itemLabel=">= 100" itemValue="100"/>
+                        <f:selectItem itemLabel=">= 200" itemValue="200"/>
+                        <f:selectItem itemLabel=">= 500" itemValue="500"/>
+                        <f:selectItem itemLabel=">= 1000" itemValue="1000"/>
+                        <f:selectItem itemLabel=">= 5000" itemValue="5000"/>
+                        <f:selectItem itemLabel=">= 10000" itemValue="10000"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+            </p:panel>
+
+            <p:outputPanel id="pnl_control">
+                <div id="box_control" class="pnl" style="margin: 10px auto;">
+                    <p:commandButton icon="ui-icon-search" update=":form_main:dtaccess :form_main:dtdetail :form_main:opcmd :grow_main_dt" process="@this :form_main:pncondition" actionListener="#{logaccess.handSearch()}" style="width:auto" value="#{PP_LOGACCESS.search}" />
+                </div>
+            </p:outputPanel>
+
+            <p:panel header="#{PP_LOGACCESS.listaccess}"  >
+                <p:dataTable id="dtaccess" value="#{logaccess.ettLogAccessGUI.listAccess}" var="laccess" filteredValue="#{logaccess.mlistAccessFiltered}"
+                             emptyMessage="#{PP_LOGACCESS.norecord}" selectionMode="single" rowKey="#{laccess.strKey}" selection="#{logaccess.selectedLogAccess}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             paginator="true" rows="10" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom" style="margin-bottom: 10px;" >
+
+                    <p:ajax global="false" process="@this" update=":form_main:dtdetail :form_main:btndelete" event="rowSelect" listener="#{logaccess.onLogAccessRowSelect}"/>
+                    <p:ajax event="sort" global="false" />
+                    <p:ajax event="filter" global="false" />
+                    <p:ajax event="page" global="false" />
+
+                    <p:column sortBy="#{laccess.userName}" filterBy="#{laccess.userName}" filterMatchMode="contains" headerText="#{PP_LOGACCESS.user}">
+                        #{laccess.userName}
+                    </p:column>
+                    <p:column sortBy="#{laccess.userFName}" filterBy="#{laccess.userFName}" filterMatchMode="contains"  headerText="#{PP_LOGACCESS.fullname}">
+                        #{laccess.userFName}
+                    </p:column>
+                    <p:column sortBy="#{laccess.mfName}" filterBy="#{laccess.mfName}" filterMatchMode="contains"  headerText="#{PP_LOGACCESS.fname}">
+                        #{laccess.mfName}
+                    </p:column>
+                    <p:column sortBy="#{laccess.mfPath}" filterBy="#{laccess.mfPath}" filterMatchMode="contains"  headerText="#{PP_LOGACCESS.fpath}">
+                        #{laccess.mfPath}
+                    </p:column>
+                    <p:column sortBy="#{laccess.number}" filterBy="#{laccess.number}" filterMatchMode="contains"  headerText="#{PP_LOGACCESS.number}">
+                        #{laccess.number}
+                    </p:column>
+
+                    <f:facet name="footer">  
+                        <h:outputText value="#{PP_LOGACCESS['total.number']}" /> : #{logaccess.ettLogAccessGUI.listAccess.size()}
+                    </f:facet>  
+                </p:dataTable>
+            </p:panel>
+
+            <p:panel header="#{PP_LOGACCESS.detailaccess}"  >
+                <p:dataTable id="dtdetail" value="#{logaccess.ettLogAccessGUI.listDetail}" var="ldetail" emptyMessage="#{PP_LOGACCESS.norecord}" 
+                             style="margin-bottom: 10px;" selectionMode="single" rowKey="#{ldetail.strKey}" filteredValue="#{logaccess.mlistDetailFilterd}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                             selection="#{logaccess.selectedLogDetail}" paginator="true" rows="20" paginatorPosition="bottom">
+
+                    <p:ajax global="false" update=":form_main:btndelete" process="@this" event="rowSelect" listener="#{logaccess.onLogDetailRowSelect}"/>
+                    <p:ajax event="sort" global="false" />
+                    <p:ajax event="filter" global="false" />
+                    <p:ajax event="page" global="false" />                    
+
+                    <p:column sortBy="#{ldetail.strDateAccess}" filterBy="#{ldetail.strDateAccess}" filterMatchMode="contains" headerText="#{PP_LOGACCESS.hour}" >
+                        #{ldetail.strDateAccess}
+                    </p:column>
+
+                    <p:column sortBy="#{ldetail.strIP}" filterBy="#{ldetail.strIP}" filterMatchMode="contains" headerText="#{PP_LOGACCESS.ip}">
+                        #{ldetail.strIP}
+                    </p:column>
+
+                    <f:facet name="footer">  
+                        <h:outputText value="#{PP_LOGACCESS['total.number']}" />
+                        : #{logaccess.ettLogAccessGUI.listDetail.size()}
+                    </f:facet>  
+                </p:dataTable>
+            </p:panel>
+
+            <p:outputPanel id="opcmd">
+                <div align="center" >
+                    <p:commandButton icon="ui-icon-trash" rendered="#{logaccess.blIsDelete}" update=":grow_main_dt" onclick="confirmation.show()" id="btndelete" disabled="#{logaccess.miLogLevel == -1}" value="#{PP_LOGACCESS.delete}" styleClass="btn-red" />
+                </div>
+            </p:outputPanel>
+
+            <p:confirmDialog id="confirmDialog" message="#{PP_ACCESSTIME.confirm}" header="#{PP_ACCESSTIME.cf_header}" severity="alert" widgetVar="confirmation">
+                <p:commandButton icon="ui-icon-circle-check" id="confirm" value="#{PP_ACCESSTIME.sure}" oncomplete="confirmation.hide()" update=":form_main:dtaccess :form_main:dtdetail :grow_main_dt" actionListener="#{logaccess.handDelete()}" process="@this"/>
+                <p:commandButton icon="ui-icon-circle-close" styleClass="back" id="decline" value="#{PP_ACCESSTIME.nyet}" onclick="confirmation.hide()" type="button" />
+            </p:confirmDialog>
+        </ui:composition>
+    </h:body>
+</html>

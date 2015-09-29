@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_AREA.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <div style="width: 24%; float: left; background: #E7E7E7;height: 1000px">
+
+                        <p:panelGrid style="width: 100%" columns="2" >
+                            <p:outputLabel for="module_search" value="#{PP_SHARED.search}:" />
+                            <p:autoComplete id="module_search" disabled="#{areaController.isDisplay}" minQueryLength="1" maxResults="10" queryDelay="500" value="#{areaController.mstrAreaSearch}" completeMethod="#{areaController.completeAreaSearch}" onfocus="this.select();" onmouseup="return false;" style="width: 100%;" >
+                                <p:ajax event="itemSelect" listener="#{areaController.onAreaSearchSelect}" process="@this, module_search" update="panel_center" />
+                            </p:autoComplete>
+                        </p:panelGrid>
+                        <hr />
+
+                        <p:panel id="pnlTree" header="#{PP_AREA.title}" >
+                            <p:tree value="#{areaController.mroot}" id="tree"  var="node" dynamic="true" selectionMode="single"
+                                    selection="#{areaController.mselectedNote}" animate="true" >
+                                <p:ajax event="select"  update=":form_main:panel_center" listener="#{areaController.onTreeSelect}"/>
+                                <p:treeNode icon="#{node.areaType eq '3'?'ui-icon-link':'ui-icon-folder-collapsed'}" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                                    <h:outputText value="#{node.displayValue}"/>
+                                </p:treeNode>
+                            </p:tree>
+                        </p:panel>
+
+
+                    </div>
+
+                    <div style="width: 75%;float: right">
+                        <p:panel id="panelAdd" header="#{PP_AREA.areaInfo}" style=" margin-bottom: 10px;" >
+                            <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                                <p:outputLabel for="name" value="#{PP_AREA.areaCode}" />
+                                <p:inputText id="name" value="#{areaController.area.areaCode}" disabled="#{areaController.isView}"
+                                             required="true" requiredMessage="#{PP_AREA.msg_req_areaCode}" maxlength="20"/>
+
+                                <p:outputLabel for="code" value="#{PP_AREA.areaType}" />
+                                <p:selectOneMenu id="code" value="#{areaController.area.areaType}" disabled="true"
+                                                 required="true" requiredMessage="#{PP_AREA.msg_req_areaType}">
+                                    <f:selectItem itemLabel="#{PP_AREA.areaTypeChoice}"/>
+                                    <f:selectItems value="#{areaController.lstAreaType}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="shortDisplay" value="#{PP_AREA.shortDisplay}" />
+                                <p:inputText id="shortDisplay" value="#{areaController.area.shortDisplay}" disabled="#{areaController.isView}"
+                                             required="true" requiredMessage="#{PP_AREA.msg_req_shortDisplay}" maxlength="15"/>
+
+
+                                <p:outputLabel for="displayValue" value="#{PP_AREA.displayValue}" />
+                                <p:inputText id="displayValue" value="#{areaController.area.displayValue}" disabled="#{areaController.isView}"
+                                             required="true" requiredMessage="#{PP_AREA.msg_req_displayValue}" maxlength="250"/>
+
+                                <p:outputLabel for="status" value="#{PP_AREA.status}" />
+                                <p:selectOneMenu id="status" value="#{areaController.area.status}" disabled="#{areaController.isView}"
+                                                 required="true" requiredMessage="#{PP_AREA.msg_req_status}" >
+                                    <f:selectItem itemLabel=""/>
+                                    <f:selectItem itemValue="0" itemLabel="#{PP_AREA.status_cancel}" />
+                                    <f:selectItem itemValue="1" itemLabel="#{PP_AREA.status_ok}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="isInternal" value="#{PP_AREA.isInternal}" />
+                                <p:selectOneMenu id="isInternal" value="#{areaController.area.isInternal}" disabled="#{areaController.isView}"
+                                                 required="true" requiredMessage="#{PP_AREA.msg_req_isInternal}" >
+                                    <f:selectItem itemLabel=""/>
+                                    <f:selectItem itemValue="0" itemLabel="#{PP_AREA.no}" />
+                                    <f:selectItem itemValue="1" itemLabel="#{PP_AREA.yes}" />
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid style="width: 100%" columnClasses="col2,col2" columns="2" >
+                                <p:outputLabel for="description" value="#{PP_AREA.description}"/>
+                                <p:inputTextarea id="description" value="#{areaController.area.description}" disabled="#{areaController.isView}"
+                                                 cols="28" autoResize="true" rows="5"  style="min-height: 80px"  />
+
+                            </p:panelGrid>
+                            <p:focus context=":form_main:panelAdd" />
+                        </p:panel>
+
+                        <div id="box_control" class="pnl">
+                            <p:outputPanel id="pnl_control">
+                                <p:outputPanel rendered="#{not areaController.isDisplay}">
+                                    <p:commandButton id="btn_add" rendered="#{!areaController.isDisplay}" actionListener="#{areaController.changeStateAdd}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" disabled="#{areaController.area.areaType eq 3}"/>
+                                    <p:commandButton id="btn_copy" rendered="#{!areaController.isDisplay}" actionListener="#{areaController.changeStateCopy()}" disabled="#{not areaController.isSelectedApp or areaController.area.areaId eq 1 or areaController.area.areaId lt 1}" process="@this" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                    <p:commandButton id="btn_edit" rendered="#{!areaController.isDisplay}" actionListener="#{areaController.changeStateEdit()}" disabled="#{not areaController.isSelectedApp or areaController.area.areaId eq 1 or areaController.area.areaId lt 1 or areaController.area.isInternal eq 0}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                    <p:commandButton id="btn_del" rendered="#{!areaController.isDisplay}" actionListener="#{areaController.changeStateDel()}" disabled="#{not areaController.isSelectedApp or areaController.area.areaId eq 1 or areaController.area.areaId lt 1}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{areaController.isDisplay}">
+                                    <p:commandButton id="btn_ok" actionListener="#{areaController.handOK()}" process="@this :form_main:panelAdd" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                    <p:commandButton id="btn_cancel" actionListener="#{areaController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                        <p:resetInput target="panelAdd" />
+                                    </p:commandButton>
+                                </p:outputPanel>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{areaController.handDelete()}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

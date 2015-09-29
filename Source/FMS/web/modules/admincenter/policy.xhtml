@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>           
+            <style type="text/css" >
+                .col1 {
+                    width: 40%;
+                }
+                
+                .col2 {
+                    width: 50%;
+                }
+            </style>
+            
+            <p:panel header="#{PP_POLICY.module_name}" style="width: 50%; margin: 0 auto" >
+                <p:panelGrid columns="2" columnClasses="col1, col2" style="width: 100%;" id="pnl_edit" >
+                    <p:selectBooleanCheckbox value="#{policy.blMAX_OPEN_SESSION_USER}" itemLabel="#{PP_POLICY.MAX_OPEN_SESSION_USER}">
+                        <p:ajax global="false" event="change" process=":form_main" update=":form_main" />
+                    </p:selectBooleanCheckbox>
+                    <p:inputText maxlength="6" id="mosu" disabled="#{!policy.blMAX_OPEN_SESSION_USER}" value="#{policy.MAX_OPEN_SESSION_USER}">
+                        <pe:keyFilter regEx="/[0-9]/i"></pe:keyFilter>
+                    </p:inputText>
+
+                    <p:selectBooleanCheckbox value="#{policy.blREQUIRE_STRONG_PASSWORD}" itemLabel="#{PP_POLICY.REQUIRE_STRONG_PASSWORD}">
+                        <p:ajax global="false" process=":form_main" update=":form_main" />
+                    </p:selectBooleanCheckbox>
+                    <p:spacer />
+
+                    <p:selectBooleanCheckbox value="#{policy.blMAX_LOGIN_FAILURE}" itemLabel="#{PP_POLICY.MAX_LOGIN_FAILURE}">
+                        <p:ajax global="false" process=":form_main" update=":form_main" />
+                    </p:selectBooleanCheckbox>
+                    <p:inputText maxlength="6" disabled="#{!policy.blMAX_LOGIN_FAILURE}" value="#{policy.MAX_LOGIN_FAILURE}">
+                        <pe:keyFilter regEx="/[0-9]/i"></pe:keyFilter>
+                    </p:inputText>
+
+                    <p:selectBooleanCheckbox disabled="#{!policy.blREQUIRE_STRONG_PASSWORD}" value="#{policy.blMINIMUM_PASSWORD_LENGTH}" itemLabel="#{PP_POLICY.MINIMUM_PASSWORD_LENGTH}">
+                        <p:ajax global="false" process=":form_main" update=":form_main" />
+                    </p:selectBooleanCheckbox>
+                    <p:inputText maxlength="6" disabled="#{!policy.blMINIMUM_PASSWORD_LENGTH or !policy.blREQUIRE_STRONG_PASSWORD}" value="#{policy.MINIMUM_PASSWORD_LENGTH}">
+                        <pe:keyFilter regEx="/[0-9]/i"></pe:keyFilter>
+                    </p:inputText>
+
+                    <p:selectBooleanCheckbox value="#{policy.blPASSWORD_EXPIRE_DURATION}" itemLabel="#{PP_POLICY.PASSWORD_EXPIRE_DURATION}">
+                        <p:ajax global="false" process=":form_main" update=":form_main" />
+                    </p:selectBooleanCheckbox>
+                    <p:inputText maxlength="6" disabled="#{!policy.blPASSWORD_EXPIRE_DURATION}" value="#{policy.PASSWORD_EXPIRE_DURATION}">
+                        <pe:keyFilter regEx="/[0-9]/i"></pe:keyFilter>
+                    </p:inputText>
+                    
+                    <p:spacer />
+                    <p:commandButton icon="ui-icon ui-icon-circle-check" style="width:auto;" rendered="#{policy.blIsEdit}" actionListener="#{policy.handUpdate}" value="#{PP_POLICY.SAVE}" update=":grow_main_dt" />
+                </p:panelGrid>
+            </p:panel>
+        </ui:composition>
+    </h:body>
+</html>

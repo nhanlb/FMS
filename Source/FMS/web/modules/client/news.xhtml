@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css" >
+                .col1, .col3 {
+                    width: 15%;
+                }
+
+                .col2,  .col4 {
+                    width: 35%;
+                }
+
+                .ui-editor {
+                    width: 100% !important;
+                }
+            </style>
+
+            <script type="text/javascript" >
+                function initRows() {
+                    $("[id='form_main:table_news'] tr").dblclick(function() {
+                        showSinglePosting([{name: 'row', value: $(this).find("td").eq(2).find("div").text()}]);
+                    });
+                }
+
+                $(document).ready(function() {
+                    initRows();
+                });
+            </script>
+
+            <div style="width: 100%;">
+                <p:outputPanel id="pnl_center" >
+                    <p:commandButton rendered="#{NewsController.getPermission('I') and not NewsController.isDisplayBtnConfirm}" process="@this" id="add" value="#{PP_SHARED.add}" actionListener="#{NewsController.changeStateAdd()}" update="pnl_center" icon="ui-icon-circle-plus" style="margin-bottom: 5px;" >
+                        <p:resetInput target=":form_main:pnl_center" />
+                    </p:commandButton>
+                    <p:commandButton process="@this" id="delete_attr" rendered="#{NewsController.getPermission('D') and not NewsController.isDisplayBtnConfirm}" disabled="#{NewsController.mselectedNews[0] eq null}" value="#{PP_SHARED.del}" actionListener="#{NewsController.changeStateDelMany()}" onclick="PF('confirmDialog').show()" styleClass="btn-margin" icon="ui-icon-trash" style="margin-bottom: 5px; width: auto" />
+                    <p:commandButton process="@this :form_main:pnl_news_detail" id="ok" value="#{PP_SHARED.ok}" rendered="#{NewsController.isDisplayBtnConfirm and (NewsController.isADD or NewsController.isEDIT)}" actionListener="#{NewsController.handOK()}" update="pnl_center" icon="ui-icon-disk" style="float: right; margin-bottom: 5px;" styleClass="btn-margin" />
+                    <p:commandButton process="@this" id="cancel" value="#{PP_SHARED.back}" rendered="#{NewsController.isDisplayBtnConfirm}" actionListener="#{NewsController.handCancel()}" update="pnl_center" icon="ui-icon ui-icon-circle-arrow-w" style="float: right; margin-bottom: 5px;" styleClass="back" oncomplete="initRows();" />
+                    <div class="clear" />
+
+                    <p:messages id="messages" showDetail="true" showSummary="false" autoUpdate="false" />
+
+                    <p:panel header="#{PP_NEWS.list_news}" rendered="#{not NewsController.isDisplayBtnConfirm}" styleClass="content-no-border" >
+                        <div style="overflow: auto" >
+                            <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_news" widgetVar="tableNews"
+                                         value="#{NewsController.mlistNews}" filteredValue="#{NewsController.mlistNewsFilterred}" var="news" 
+                                         emptyMessage="#{PP_SHARED.empty_message}" rowKey="#{news.newsId}" selection="#{NewsController.mselectedNews}"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15,#{NewsController.mlistNews.size()}" rowSelectMode="checkbox" paginator="true" rows="10" style="width: 100%;" >
+
+                                <p:ajax process="@this" global="false" event="rowSelectCheckbox" update=":form_main:delete_attr" />
+                                <p:ajax process="@this" global="false" event="rowUnselectCheckbox" update=":form_main:delete_attr" />
+                                <p:ajax process="@this" global="false" event="toggleSelect" update=":form_main:delete_attr" />
+                                <p:ajax process="@this" global="false" event="sort" oncomplete="initRows()"/>
+                                <p:ajax process="@this" global="false" event="page" oncomplete="initRows()"/>
+                                <p:ajax process="@this" global="false" event="filter" oncomplete="initRows()"/>                            
+
+                                <p:column selectionMode="multiple"  /> 
+
+                                <p:column style="font-weight: bold; text-align: center; white-space:nowrap;" >
+                                    <p:commandLink styleClass="color-blue" rendered="#{NewsController.getPermission('S')}" value="#{PP_SHARED.view} | " actionListener="#{NewsController.changeStateView(news)}" update=":form_main:pnl_center" >
+                                        <p:resetInput target=":form_main:pnl_center" />
+                                    </p:commandLink>
+                                    <p:commandLink rendered="#{NewsController.getPermission('U')}" value="#{PP_SHARED.edit} | " actionListener="#{NewsController.changeStateEdit(news)}" update=":form_main:pnl_center" >
+                                        <p:resetInput target=":form_main:pnl_center" />
+                                    </p:commandLink>
+                                    <p:commandLink styleClass="color-red" rendered="#{NewsController.getPermission('D')}" value="#{PP_SHARED.del}" actionListener="#{NewsController.changeStateDel(news)}" onclick="PF('confirmDialog').show();" />
+                                </p:column>
+   
+                                <p:column headerText="#{PP_NEWS.created_date}" sortBy="#{NewsController.dateToString(news.createdDate)}" filterBy="#{NewsController.dateToString(news.createdDate)}" filterMatchMode="contains" >
+                                    #{NewsController.dateToString(news.createdDate)}
+                                </p:column>                                  
+                                <p:column headerText="#{PP_NEWS.title}" sortBy="#{news.title}" filterBy="#{news.title}" filterMatchMode="contains" >
+                                    #{news.title}
+                                </p:column>                  
+                                <p:column headerText="#{PP_NEWS.created_name}" sortBy="#{news.createdName}" filterBy="#{news.createdName}" filterMatchMode="contains" >
+                                    #{news.createdName}
+                                </p:column>    
+                                <p:column headerText="#{PP_NEWS.modified_date}" sortBy="#{NewsController.dateToString(news.modifiedDate)}" filterBy="#{NewsController.dateToString(news.modifiedDate)}" filterMatchMode="contains" >
+                                    #{NewsController.dateToString(news.modifiedDate)}
+                                </p:column>                                 
+                                <p:column headerText="#{PP_NEWS.modified_name}" sortBy="#{news.createdName}" filterBy="#{news.modifiedName}" filterMatchMode="contains" >
+                                    #{news.modifiedName}
+                                </p:column>                
+                                <p:column headerText="#{PP_NEWS.status}" sortBy="#{news.status}" filterBy="#{news.status}" filterMatchMode="contains" >
+                                    <p:selectBooleanCheckbox disabled="true" value="#{news.status eq '1'}" />
+                                </p:column>                
+                            </p:dataTable>
+                        </div>
+                        <p:remoteCommand name="showSinglePosting" process="@this" update=":form_main:pnl_center"  actionListener="#{NewsController.doubleClickSelection}"/>
+                    </p:panel>
+
+                    <p:panel header="#{PP_NEWS.news_detail}" rendered="#{NewsController.isDisplayBtnConfirm}" >
+                        <p:panelGrid id="pnl_news_detail" style="width: 100%" >
+                            <p:row>
+                                <p:column styleClass="w15">
+                                    <p:outputLabel for="title" value="#{PP_NEWS.title}" />
+                                </p:column>
+                                <p:column styleClass="w35">
+                                    <p:inputText id="title" maxlength="510" disabled="#{NewsController.isDISABLE}" value="#{NewsController.mtmpNews.title}"  required="true" requiredMessage="#{PP_NEWS.title}#{PP_SHARED.can_not_be_empty}" />              
+                                </p:column>
+                                <p:column styleClass="w15">
+                                    <p:outputLabel for="created_name" value="#{PP_NEWS.created_name}" />
+                                </p:column>
+                                <p:column styleClass="w35">
+                                    <p:inputText id="created_name" disabled="true" value="#{NewsController.mtmpNews.createdName}"   />    
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="created_date" value="#{PP_NEWS.created_date}" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="created_date" disabled="true" value="#{NewsController.mtmpNews.createdDate}"   >
+                                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel for="modified_name" value="#{PP_NEWS.modified_name}" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="modified_name" disabled="true" value="#{NewsController.mtmpNews.modifiedName}"   />       
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="modified_date" value="#{PP_NEWS.modified_date}" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="modified_date" disabled="true" value="#{NewsController.mtmpNews.modifiedDate}"   >
+                                        <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss" timeZone="GMT+7"/>
+                                    </p:inputText>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel for="status" value="#{PP_NEWS.status}" />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="status" disabled="#{NewsController.isDISABLE}" value="#{NewsController.mtmpNews.status}"   >
+                                        <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                    </p:selectOneMenu>                                                       
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="content" value="#{PP_NEWS.content}" />
+                                </p:column>
+                                <p:column colspan="3">
+                                    <p:editor id="content" disabled="#{NewsController.isDISABLE}" value="#{NewsController.mtmpNews.content}"  required="true" requiredMessage="#{PP_NEWS.content}#{PP_SHARED.can_not_be_empty}" />     
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:outputPanel>
+            </div>
+
+            <p:confirmDialog appendTo=":form_main" styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon ui-icon-circle-check" process="@this" id="confirm" value="#{PP_SHARED.yes}" update="messages, pnl_center" actionListener="#{NewsController.handDelete}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" /> 		
+            </p:confirmDialog>   
+        </ui:composition>
+    </h:body>
+</html>

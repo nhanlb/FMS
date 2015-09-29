@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_EXAMTEMPLATEMNG.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel header="#{PP_EXAMTEMPLATEMNG.templatesInfo}" style=" margin-bottom: 10px;" >
+                        <p:panelGrid id="panel_exam_templates" style="width: 100%;" 
+                                     columnClasses="col1,col2,col3,col4" columns="4" >
+                            <p:outputLabel for="examCode" value="#{PP_EXAMTEMPLATEMNG.examCode}" />
+                            <p:inputText maxlength="50" id="examCode" 
+                                         value="#{examTemplateController.template.examCode}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_examCode}"/>
+                            <p:outputLabel for="examName" value="#{PP_EXAMTEMPLATEMNG.examName}" />
+                            <p:inputText maxlength="200" id="examName" 
+                                         value="#{examTemplateController.template.examName}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_examName}"/>
+                            <p:outputLabel for="examAddress" value="#{PP_EXAMTEMPLATEMNG.examAddress}" />
+                            <p:inputText maxlength="250" id="examAddress" 
+                                         value="#{examTemplateController.template.examAddress}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_examAddress}"/>
+                            <p:outputLabel for="duration" value="#{PP_EXAMTEMPLATEMNG.duration}" />
+                            <p:inputText maxlength="11" id="duration" 
+                                         value="#{examTemplateController.template.duration}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_duration}">
+                                <pe:keyFilter regEx="/[0-9]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="maxPoint" value="#{PP_EXAMTEMPLATEMNG.maxPoint}" />
+                            <p:inputText maxlength="250" id="maxPoint" 
+                                         value="#{examTemplateController.template.maxPoint}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_maxPoint}">
+                                <pe:keyFilter regEx="/[0-9]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="examPassTerm" value="#{PP_EXAMTEMPLATEMNG.examPassTerm}" />
+                            <p:inputText maxlength="20" id="examPassTerm" 
+                                         value="#{examTemplateController.template.examPassTerm}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_examPassTerm}">
+                                <pe:keyFilter regEx="/[0-9.]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="examRate" value="#{PP_EXAMTEMPLATEMNG.examRate}" />
+                            <p:inputText maxlength="20" id="examRate" 
+                                         value="#{examTemplateController.template.examRate}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_examRate}">
+                                <pe:keyFilter regEx="/[0-9.]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="isDefault" value="#{PP_EXAMTEMPLATEMNG.isDefault}" />
+                            <p:selectOneMenu id="isDefault" value="#{examTemplateController.template.isDefault}" 
+                                             disabled="#{examTemplateController.isDISABLE}" required="true" 
+                                             requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_isDefault}" >
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="Có" itemValue="1" />
+                                <f:selectItem itemLabel="Không" itemValue="0" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="orderType" value="#{PP_EXAMTEMPLATEMNG.orderType}" />
+                            <p:selectOneMenu id="orderType" value="#{examTemplateController.template.orderType}" 
+                                             disabled="#{examTemplateController.isDISABLE}" required="true" 
+                                             requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_orderType}" >
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="ASC" itemValue="1" />
+                                <f:selectItem itemLabel="DESC" itemValue="2" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="priority" value="#{PP_EXAMTEMPLATEMNG.priority}" />
+                            <p:inputText maxlength="11" id="priority" 
+                                         value="#{examTemplateController.template.priority}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_priority}">
+                                <pe:keyFilter regEx="/[0-9]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="ord" value="#{PP_EXAMTEMPLATEMNG.ord}" />
+                            <p:inputText maxlength="11" id="ord" 
+                                         value="#{examTemplateController.template.ord}" 
+                                         disabled="#{examTemplateController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_ord}">
+                                <pe:keyFilter regEx="/[0-9]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="status" value="#{PP_EXAMTEMPLATEMNG.status}" />
+                            <p:selectOneMenu id="status" value="#{examTemplateController.template.status}" 
+                                             disabled="#{examTemplateController.isDISABLE}" required="true" 
+                                             requiredMessage="#{PP_EXAMTEMPLATEMNG.msg_req_status}" >
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                            </p:selectOneMenu>
+
+                            <p:focus context=":form_main:panel_exam_templates" />
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not examTemplateController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_add" rendered="#{examTemplateController.getPermission('I')}" actionListener="#{examTemplateController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tableApp').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{examTemplateController.getPermission('I')}" actionListener="#{examTemplateController.changeStateCopy()}" disabled="#{not examTemplateController.isSelectedApp}" process="@this" onclick="PF('tableApp').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{examTemplateController.getPermission('U')}"
+                                                 actionListener="#{examTemplateController.changeStateEdit()}" 
+                                                 disabled="#{not examTemplateController.isSelectedApp}" process="@this" 
+                                                 styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" 
+                                                 update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{examTemplateController.getPermission('D')}" actionListener="#{examTemplateController.changeStateDel()}" disabled="#{not examTemplateController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{examTemplateController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_ok" actionListener="#{examTemplateController.handOK()}" 
+                                                 process="@this :form_main:panel_exam_templates" 
+                                                 styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" 
+                                                 update="panel_center :grow_main_dt" 
+                                                 icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{examTemplateController.handCancel()}" 
+                                                 process="@this" styleClass="btn-margin back" 
+                                                 value="#{PP_SHARED.back}" update="panel_center"
+                                                 icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_exam_templates" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_EXAMTEMPLATEMNG.templates_list}" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_templates" widgetVar="tableApp" value="#{examTemplateController.lstTemplates}" var="template"
+                                     filteredValue="#{examTemplateController.lstTemplatesFiltered}"
+                                     rowIndexVar="stt"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{examTemplateController.isDisplayBtnConfirm}" selectionMode="single" rowKey="#{template.examId}" selection="#{examTemplateController.mselectedTemplate}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{examTemplateController.lstTemplates.size()}" paginator="true" rows="10" >
+
+                            <p:ajax global="false" event="rowSelect" listener="#{examTemplateController.onRowSelect}" update=":form_main:panel_exam_templates" />
+                            <p:ajax global="false" event="rowUnselect" listener="#{examTemplateController.onRowSelect}" update=":form_main:panel_exam_templates"  />
+                            <p:ajax global="false" event="sort" />
+                            <p:ajax global="false" event="page" />
+                            <p:ajax global="false" event="filter" />
+
+                            <p:column headerText="Stt">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.examCode}" filterBy="#{template.examCode}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.examCode}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.examName}" filterBy="#{template.examName}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.examName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.examAddress}" filterBy="#{template.examAddress}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.examAddress}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.duration}" filterBy="#{template.duration}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.duration}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.maxPoint}" filterBy="#{template.maxPoint}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.maxPoint}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.examPassTerm}" filterBy="#{template.examPassTerm}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.examPassTerm}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.examRate}" filterBy="#{template.examRate}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.examRate}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.isDefault}" filterBy="#{template.isDefault}" filterMatchMode="contains" >
+                                <h:outputText rendered="#{template.isDefault eq '1'}" value="#{PP_EXAMTEMPLATEMNG.yes}" />
+                                <h:outputText rendered="#{template.isDefault ne '1'}" value="#{PP_EXAMTEMPLATEMNG.no}" />
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.orderType}" filterBy="#{template.orderType}" filterMatchMode="contains" >
+                                <h:outputText rendered="#{template.orderType eq '1'}" value="ASC" />
+                                <h:outputText rendered="#{template.orderType ne '1'}" value="DESC" />
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.priority}" filterBy="#{template.priority}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.priority}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.ord}" filterBy="#{template.ord}" filterMatchMode="contains" >
+                                <h:outputText value="#{template.ord}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_EXAMTEMPLATEMNG.status}" style="vertical-align: top">
+                                <h:outputText styleClass="lbl-green" rendered="#{template.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{template.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{examTemplateController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tableApp').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

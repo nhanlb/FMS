@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css">
+                .ui-editor iframe {
+                    background: url('../resources/images/news-bg.jpg') no-repeat bottom right;
+                    background-size: 100% 100%;
+                }
+                
+                .ui-editor {
+                    margin: auto;
+                }
+            </style>
+
+            <p:panel header="" >
+                <p:editor id="content" value="#{LoginNewsController.mstrContent}"  required="true" requiredMessage="#{PP_NEWS.content}#{PP_SHARED.can_not_be_empty}" width="450" height="350" />     
+                <center>
+                    <br />
+                    <p:commandButton process="@this, content" actionListener="#{LoginNewsController.handSave()}" update=":grow_main_dt" value="#{PP_SHARED.ok}" icon="ui-icon-disk" />
+                </center>
+            </p:panel>
+        </ui:composition>
+    </h:body>
+</html>            

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css">
+                #form_main\:pnl_center > tbody > tr > td {
+                    vertical-align: top !important;
+                }
+                
+                .pnct td{
+                    vertical-align: middle !important;
+                }
+                
+                .pnuser .ui-panel-content{
+                    overflow: auto;
+                    height:600px;
+                }            
+            </style>
+
+            <h:panelGrid id="pnl_center" columns="2" style="width: 100%">
+                <p:panel styleClass="pnuser" header="#{PP_ADDRESS.member}">
+                    <p:tree  styleClass="csstreead" widgetVar="treewvad" id="treeuser" value="#{address.root}" var="tree"
+                             selectionMode="checkbox" highlight="true" selection="#{address.selectedNodes}">
+                        <p:treeNode icon="#{tree.type eq '1'?'group':'user'}">
+                            #{tree.name}
+                        </p:treeNode>
+                    </p:tree>
+                </p:panel>
+                <p:panel header="#{PP_ADDRESS.list}">
+                    <p:dataTable draggableColumns="true" rowKey="#{aaddress.address.ADDR_ID}" id="dataad" value="#{address.listData}" var="aaddress" selection="#{address.selectedAddress}" selectionMode="single">
+
+                        <p:ajax process=":form_main:dataad" disabled="#{!address.isDISABLE}" event="rowSelect" listener="#{address.onADDRGUIRowSelect}" update=":form_main" />
+
+                        <p:column headerText="#{PP_ADDRESS.address_name}" sortBy="#{aaddress.address.NAME}">
+                            <h:outputText value="#{aaddress.address.NAME}"></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.granttype}" sortBy="#{aaddress.address.GRANT_TYPE}">
+                            <h:outputText value='#{aaddress.address.GRANT_TYPE eq 1 ? PP_ADDRESS.grant1:PP_ADDRESS.grant0}'></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.state}" sortBy="#{aaddress.address.STATUS}">
+                            <h:outputText value='#{aaddress.address.STATUS eq 1 ? PP_ADDRESS.enable:PP_ADDRESS.disable}'></h:outputText>
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.order}" sortBy="#{aaddress.address.ORD}">
+                            <h:outputText value="#{aaddress.address.ORD}"></h:outputText>
+                        </p:column>
+                    </p:dataTable>
+
+                    <div align="center" style="margin-top: 10px;">
+                        <p:outputPanel rendered="#{address.isDISABLE}">
+                            <p:commandButton value="#{PP_SHARED.add}" icon="ui-icon-document" rendered="#{address.getPermission('I')}" process="@this" update=":form_main" actionListener="#{address.changeStateAdd()}"></p:commandButton>
+                            <p:commandButton value="#{PP_SHARED.edit}" styleClass="btn-green btn-margin" icon="ui-icon-pencil" disabled="#{!address.isSelectedAddr}" process="@this" update=":form_main" rendered="#{address.getPermission('U')}" actionListener="#{address.changeStateEdit()}"></p:commandButton>
+                            <p:commandButton value="#{PP_SHARED.del}" styleClass="btn-red btn-margin" icon="ui-icon-trash" disabled="#{!address.isSelectedAddr}" rendered="#{address.getPermission('D')}" onclick="confirmation.show()"></p:commandButton>
+                        </p:outputPanel>
+
+                        <p:outputPanel rendered="#{not address.isDISABLE}">
+                            <p:commandButton value="#{PP_SHARED.ok}" process=":form_main"  icon="ui-icon-circle-check" update=":form_main :grow_main_dt" rendered="#{!address.isDISABLE}" actionListener="#{address.handOK}"></p:commandButton>
+                            <p:commandButton value="#{PP_SHARED.cancel}" process="@this" icon="ui-icon-circle-arrow-w" styleClass="btn-margin back" rendered="#{!address.isDISABLE}" update=":form_main" actionListener="#{address.handCancel}"></p:commandButton>
+                        </p:outputPanel>
+                    </div>
+                    <hr />
+
+                    <h:panelGrid columns="4" style="width: 100%;" columnClasses="w15,w35,w15,w35">
+                        <p:outputLabel for="name" value="#{PP_ADDRESS.address_name}" />
+                        <p:inputText id="name" disabled="#{address.isVIEW}" required="true" requiredMessage="#{PP_ADDRESS.address_name}#{PP_SHARED.can_not_be_empty}" value="#{address.TMPAddress.address.NAME}" />
+
+                        <p:outputLabel value="#{PP_ADDRESS.granttype}" />
+                        <p:selectOneMenu disabled="#{address.isVIEW}" value="#{address.TMPAddress.address.GRANT_TYPE}">
+                            <f:selectItem itemLabel="#{PP_ADDRESS.grant1}" itemValue="1" />
+                            <f:selectItem itemLabel="#{PP_ADDRESS.grant0}" itemValue="0" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{PP_ADDRESS.order}" />
+                        <p:inputText disabled="#{address.isVIEW}" required="true" requiredMessage="#{PP_ADDRESS.order}#{PP_SHARED.can_not_be_empty}" value="#{address.TMPAddress.address.ORD}" />
+
+                        <h:outputText value="#{PP_ADDRESS.state}"></h:outputText>
+                        <p:selectOneMenu disabled="#{address.isVIEW}" value="#{address.TMPAddress.address.STATUS}">
+                            <f:selectItem itemLabel="#{PP_ADDRESS.enable}" itemValue="1" />
+                            <f:selectItem itemLabel="#{PP_ADDRESS.disable}" itemValue="0" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+
+                    <p:dataTable styleClass="accessdtl" value="#{address.listAddressDTL}" var="adddtl" id="dtldata" editable="true">
+                        <p:ajax event="rowEdit" listener="#{address.onEdit}" update=":grow_main_dt" />  
+                        <p:column headerText="#{PP_ADDRESS.host}" sortBy="#{adddtl.ADDRESS}">
+                            <p:cellEditor>  
+                                <f:facet name="output">  
+                                    <h:outputText value="#{adddtl.ADDRESS}" />                                                  
+                                </f:facet>  
+                                <f:facet name="input">  
+                                    <p:inputText value="#{adddtl.ADDRESS}" label="#{PP_ADDRESS.host}"/>
+                                </f:facet>  
+                            </p:cellEditor> 
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.subnet}" sortBy="#{adddtl.SUBNET}">
+                            <p:cellEditor>  
+                                <f:facet name="output">  
+                                    <h:outputText value="#{adddtl.SUBNET}" />                                                  
+                                </f:facet>  
+                                <f:facet name="input">  
+                                    <p:inputText value="#{adddtl.SUBNET}" label="#{PP_ADDRESS.subnet}"/>
+                                </f:facet>  
+                            </p:cellEditor> 
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.option}">
+                            <p:rowEditor rendered="#{!address.isVIEW}"/>
+                        </p:column>
+                        <p:column headerText="#{PP_ADDRESS.delete}" style="width:50px">
+                            <p:commandButton update=":form_main:dtldata" actionListener='#{address.handDeleteAddressDTL(adddtl)}' disabled="#{address.isVIEW}" icon="ui-icon-trash" style="width:auto; min-width: 0;"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <div align="center" style="padding-top:7px">
+                        <p:commandButton icon="ui-icon-document" disabled="#{address.isVIEW}" process="@this" update=":form_main:dtldata" actionListener="#{address.handAddAddrDTL}" value="#{PP_ADDRESS.add}"/>
+                    </div>
+                </p:panel>
+            </h:panelGrid>
+
+
+            <p:confirmDialog id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="#{PP_SHARED.yes}" oncomplete="confirmation.hide();trimtext();" actionListener="#{address.handDelete}" update=":form_main :grow_main_dt" />
+                <p:commandButton id="decline" value="#{PP_SHARED.no}" onclick="confirmation.hide()" type="button" />
+            </p:confirmDialog>
+        </ui:composition>
+    </h:body>
+</html>

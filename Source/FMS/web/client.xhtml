@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Telsoft ADMIN</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="#{secuser.isMobileDevice() ? 'mtelsoft.xhtml' : 'telsoft.xhtml'}">
+            <ui:define name="qmenu">
+                <ui:include src="usercontrols/qmenu.xhtml" />
+            </ui:define>
+            <ui:define name="menu">
+                <ui:include src="usercontrols/menu.xhtml" />
+            </ui:define>
+            <ui:define name="center">
+                <ui:include src="usercontrols/centerclient.xhtml" />
+            </ui:define>
+            <ui:define name="bottom">
+                <ui:include src="usercontrols/bottom.xhtml" />
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

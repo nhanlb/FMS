@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Quản lý nhân viên</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <div style="width: 24%; float: left; background: #E7E7E7;height: 1000px">
+                        <p:blockUI id="blTree" block="opnlTree" widgetVar="blTree"/>
+                        <p:outputPanel id="opnlTree">
+                            <p:panelGrid style="width: 100%" columns="2" >
+                                <p:outputLabel for="module_search" value="#{PP_SHARED.search}:" />
+                                <p:autoComplete id="module_search" disabled="#{departmentController.isDisplayBtnConfirm}" minQueryLength="1" maxResults="10" queryDelay="500" value="#{departmentController.mstrDepartmentSearch}" completeMethod="#{departmentController.completeDepartmentSearch}" onfocus="this.select();" onmouseup="return false;" style="width: 100%;" >
+                                    <p:ajax event="itemSelect" listener="#{departmentController.onDepartmentSearchSelect}" process="@this, module_search" update="panel_center" />
+                                </p:autoComplete>
+                            </p:panelGrid>
+                            <hr />
+                            <p:panel id="pnlTree" header="#{PP_STAFF.title}" >
+                                <p:tree value="#{departmentController.mroot}" id="tree"  var="node" dynamic="true" selectionMode="single"
+                                        selection="#{departmentController.mselectedNote}" animate="true" >
+                                    <p:ajax event="select"  update=":form_main:panel_center" listener="#{departmentController.onTreeSelect}"/>
+                                    <p:treeNode icon="#{node.deptType eq '1'?'ui-icon-folder-collapsed':'ui-icon-link'}" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                                        <h:outputText value="#{node.name}"/>
+                                    </p:treeNode>
+                                </p:tree>
+                            </p:panel>
+                        </p:outputPanel>
+                    </div>
+
+                    <div style="width: 75%;float: right">
+                        <p:panel id="panelAdd" styleClass="pnl-main" header="#{PP_STAFF.staffInfo}" style=" margin-bottom: 10px;" >
+                            <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                                <p:outputLabel for="fullName" value="#{PP_STAFF.fullName}" />
+                                <p:inputText id="fullName" value="#{staffController.staff.fullName}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                             required="true" requiredMessage="#{PP_STAFF.msg_req_fullName}" maxlength="200"/>
+
+                                <p:outputLabel for="staffCode" value="#{PP_STAFF.staffCode}" />
+                                <p:inputText id="staffCode" value="#{staffController.staff.staffCode}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                             required="true" requiredMessage="#{PP_STAFF.msg_req_staffCode}" maxlength="50"/>
+
+                                <p:outputLabel for="gender" value="Giới tính" />
+                                <p:selectOneRadio id="gender" value="#{staffController.staff.gender}">
+                                    <f:selectItem itemValue="1" itemLabel="Nam"/>
+                                    <f:selectItem itemValue="0" itemLabel="Nữ"/>
+                                </p:selectOneRadio>
+
+                                <p:outputLabel for="birthDay" value="Ngày sinh" />
+                                <p:calendar id="birthDay" value="#{staffController.staff.birthDay}" pattern="dd/MM/yyyy"/>
+
+                                <p:outputLabel for="phone" value="#{PP_STAFF.phone}" />
+                                <p:inputText maxlength="20" id="phone" value="#{staffController.staff.phone}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                             required="true" requiredMessage="#{PP_STAFF.msg_req_phone}">
+                                    <pe:keyFilter regEx="/[\d\+]/"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="cmnd" value="#{PP_STAFF.cmnd}" />
+                                <p:inputText maxlength="20" id="cmnd" value="#{staffController.staff.cmnd}" disabled="#{not staffController.isDisplayBtnConfirm}">
+                                    <pe:keyFilter regEx="/[\d\+]/"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="taxNum" value="#{PP_STAFF.taxNum}" />
+                                <p:inputText maxlength="20" id="taxNum" value="#{staffController.staff.taxNum}" disabled="#{not staffController.isDisplayBtnConfirm}">
+                                    <pe:keyFilter regEx="/[\d\+]/"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="email" value="#{PP_STAFF.email}" />
+                                <p:inputText maxlength="100" id="email" value="#{staffController.staff.email}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                             validatorMessage="#{PP_STAFF.msg_cvert_email}">
+                                    <pe:keyFilter regEx="/[a-z0-9_\.\-@]/i"/>
+                                    <f:validateRegex pattern="[\w.-]+@[a-zA-Z_]+\.(([a-zA-Z])+\.?)+"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="city" value="Nguyên quán" />
+                                <p:selectOneMenu id="city" value="#{staffController.staff.cityId}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 required="true" requiredMessage="#{PP_STAFF.msg_req_cityId}" >
+                                    <f:selectItem itemLabel="Tỉnh/ Thành phố"/>
+                                    <f:selectItems value="#{staffController.cboCity}" var="item" itemValue="#{item.value}" itemLabel="#{item.label}"/>
+                                    <p:ajax listener="#{staffController.loadDistrict()}" update=":form_main:district :form_main:ward" />
+                                </p:selectOneMenu>
+
+                                <p:selectOneMenu id="district" value="#{staffController.staff.districtId}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 required="true" requiredMessage="#{PP_STAFF.msg_req_districtId}" >
+                                    <f:selectItem itemLabel="Quận/ huyện"/>
+                                    <f:selectItems value="#{staffController.cboDistrict}" var="item" itemValue="#{item.value}" itemLabel="#{item.label}"/>
+                                    <p:ajax event="change"  process="@this" listener="#{staffController.loadWard()}" update=":form_main:ward" />
+                                </p:selectOneMenu>
+
+                                <p:selectOneMenu id="ward" value="#{staffController.staff.wardId}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 required="true" requiredMessage="#{PP_STAFF.msg_req_wardId}" >
+                                    <f:selectItem itemLabel="Phường/ xã"/>
+                                    <f:selectItems value="#{staffController.cboWard}" var="item" itemValue="#{item.value}" itemLabel="#{item.label}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="position" value="Chức vụ" />
+                                <p:selectOneMenu id="position" value="#{staffController.staff.position}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 required="true" requiredMessage="#{PP_STAFF.msg_req_status}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItems value="#{staffController.lstPosition}" var="item" itemValue="#{item.value}" itemLabel="#{item.value}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="status" value="#{PP_SHARED.status}" />
+                                <p:selectOneMenu id="status" value="#{staffController.staff.status}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 required="true" requiredMessage="#{PP_STAFF.msg_req_status}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItem itemValue="1" itemLabel="#{PP_SHARED.status_cancel}" />
+                                    <f:selectItem itemValue="0" itemLabel="#{PP_SHARED.status_ok}" />
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid style="width: 100%" columnClasses="col2,col2" columns="2" >
+                                <p:outputLabel for="address" value="#{PP_STAFF.address}"/>
+                                <p:inputTextarea id="address" value="#{staffController.staff.address}" disabled="#{not staffController.isDisplayBtnConfirm}"
+                                                 cols="33" autoResize="true" rows="2"  style="min-height: 80px"  />
+
+                            </p:panelGrid>
+                            <p:focus context=":form_main:panelAdd" />
+                        </p:panel>
+
+                        <div id="box_control" class="pnl">
+                            <p:outputPanel id="pnl_control">
+                                <p:outputPanel rendered="#{not staffController.isDisplayBtnConfirm}">
+                                    <script language="text/javascript">
+                                    PF('blTree').hide();
+                                    </script>
+                                    <p:commandButton id="btn_add" rendered="#{!staffController.isDisplayBtnConfirm}" actionListener="#{staffController.changeStateAdd()}" process="@this" styleClass="btn-margin btn-blue" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" />
+                                    <p:commandButton id="btn_copy" rendered="#{!staffController.isDisplayBtnConfirm}" actionListener="#{staffController.changeStateCopy()}"  process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                    <p:commandButton id="btn_edit" rendered="#{!staffController.isDisplayBtnConfirm}" actionListener="#{staffController.changeStateEdit()}"  process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                    <p:commandButton id="btn_del" rendered="#{!staffController.isDisplayBtnConfirm}" actionListener="#{staffController.changeStateDel()}" process="@this" styleClass="btn-margin btn-boocdo" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{staffController.isDisplayBtnConfirm}">
+                                    <script language="text/javascript">
+                                        PF('blTree').show();
+                                    </script>
+                                    <p:commandButton id="btn_ok" actionListener="#{staffController.handOK()}" process="@this :form_main:panelAdd" styleClass="btn-margin btn-blue" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                    <p:commandButton id="btn_cancel" actionListener="#{staffController.handCancel()}" process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"/>
+                                </p:outputPanel>
+                            </p:outputPanel>
+                        </div>
+                        <p:panel header="#{PP_REASONMNG.reason_list}" styleClass="pnl-blue" style="margin-top: 10px;">
+
+                            <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="tblStaff" widgetVar="wv_tblStaff" value="#{staffController.mlstStaff}" var="staff"
+                                         emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{staffController.isDisplayBtnConfirm}" selectionMode="single" rowKey="#{staff.staffId}" selection="#{staffController.mSelectedStaff}"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowIndexVar="index"
+                                         rowsPerPageTemplate="5,10,15,#{staffController.mlstStaff.size()}" paginator="true" rows="10" >
+                                <p:column headerText="STT" style="vertical-align: top">
+                                    <h:outputText value="#{index+1}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_STAFF.staffCode}" width="40" style="vertical-align: top" filterBy="#{staff.staffCode}" filterMatchMode="contains">
+                                    <h:outputText value="#{staff.staffCode}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_STAFF.fullName}" style="vertical-align: top">
+                                    <h:outputText value="#{staff.fullName}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_SHARED.status}" style="vertical-align: top">
+                                    <h:outputText styleClass="lbl-green" rendered="#{staff.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                    <h:outputText styleClass="lbl-red" rendered="#{staff.status ne '1'}" value="#{PP_SHARED.disable}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </div>
+                </div>
+                <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                    <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{staffController.handDelete}" oncomplete="PF('confirmDialog').hide()" />
+                    <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+                </p:confirmDialog>
+            </p:outputPanel>
+        </ui:composition>
+    </h:body>
+</html>
+

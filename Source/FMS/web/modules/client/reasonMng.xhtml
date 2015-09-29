@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_REASONMNG.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel id="panel_reason" header="#{PP_REASONMNG.reasonInfo}" styleClass="pnl-red" style=" margin-bottom: 10px;" >
+                        <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+                            <p:outputLabel for="reasonType" value="#{PP_REASONMNG.reasonType}" />
+                            <p:selectOneMenu id="reasonType" value="#{reasonController.reason.reasonType}" disabled="#{reasonController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_REASONMNG.msg_req_reasonType}" >
+                                <f:selectItem itemLabel="#{PP_REASONMNG.reasonTypeChoice}"/>
+                                <f:selectItems value="#{reasonController.lstReasonType}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="shortDisplay" value="#{PP_REASONMNG.shortDisplay}" />
+                            <p:inputText maxlength="15" id="shortDisplay" value="#{reasonController.reason.shortDisplay}" disabled="#{reasonController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_REASONMNG.msg_req_shortDisplay}"/>
+
+                            <p:outputLabel for="displayValue" value="#{PP_REASONMNG.displayValue}" />
+                            <p:inputText id="displayValue" value="#{reasonController.reason.displayValue}" maxlength="255" disabled="#{reasonController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_REASONMNG.msg_req_displayValue}"/>
+                            <p:outputLabel for="status" value="#{PP_REASONMNG.status}" />
+                            <p:selectOneMenu id="status" value="#{reasonController.reason.status}" required="true" disabled="#{reasonController.isDISABLE}" >
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:panelGrid style="width: 100%;" columnClasses="col3,col3" columns="2" >
+                            <p:outputLabel for="description" value="#{PP_REASONMNG.description}" />
+                            <p:inputTextarea id="description" value="#{reasonController.reason.description}" cols="30" autoResize="true" rows="5" style="min-height: 80px" disabled="#{reasonController.isDISABLE}"/>
+                        </p:panelGrid>
+                        <p:focus context=":form_main:panel_reason" />
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not reasonController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_add"/>
+                                <p:commandButton id="btn_add" rendered="#{reasonController.getPermission('I')}" actionListener="#{reasonController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{reasonController.getPermission('I')}" actionListener="#{reasonController.changeStateCopy()}" disabled="#{not reasonController.isSelectedApp}" process="@this" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{reasonController.getPermission('U')}" actionListener="#{reasonController.changeStateEdit()}" disabled="#{not reasonController.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{reasonController.getPermission('D')}" actionListener="#{reasonController.changeStateDel()}" disabled="#{not reasonController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{reasonController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_ok"/>
+                                <p:commandButton id="btn_ok" actionListener="#{reasonController.handOK()}" process="@this :form_main:panel_reason" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{reasonController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_reason" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_REASONMNG.reason_list}" styleClass="pnl-blue" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_reason" widgetVar="tableApp" value="#{reasonController.lstReason}" var="reason"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{reasonController.isDisplayBtnConfirm}" selectionMode="single" rowKey="#{reason.reasonId}" selection="#{reasonController.mselectedReason}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{reasonController.lstReason.size()}" paginator="true" rows="10" >
+
+                            <p:ajax global="false" event="rowSelect" process="@this" listener="#{reasonController.onRowSelect}" update=":form_main:panel_reason" />
+                            <p:ajax global="false" event="rowUnselect" process="@this" listener="#{reasonController.onRowSelect}" update=":form_main:panel_reason"  />
+                            <p:ajax global="false" process="@this" event="sort" />
+                            <p:ajax global="false" process="@this" event="page" />
+                            <p:ajax global="false" process="@this" event="filter" />
+
+                            <p:column headerText="#{PP_REASONMNG.reasonType}" filterMatchMode="contains" style="vertical-align: top" >
+                                <ui:repeat value="#{reasonController.lstReasonType}" var="item">
+                                    <h:outputText value="#{item.value}" rendered="#{reason.reasonType == item.code}"/>
+                                </ui:repeat>
+                            </p:column>
+
+                            <p:column headerText="#{PP_REASONMNG.shortDisplay}" filterBy="#{reason.shortDisplay}" filterMaxLength="15" filterMatchMode="contains" >
+                                <h:outputText value="#{reason.shortDisplay}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_REASONMNG.displayValue}" sortBy="#{reason.displayValue}" filterBy="#{reason.displayValue}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{reason.displayValue}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_REASONMNG.status}" style="vertical-align: top">
+                                <h:outputText styleClass="lbl-green" rendered="#{reason.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{reason.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{reasonController.handDelete}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

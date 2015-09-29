@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <!--Style-->
+            <style type="text/css">
+                .level-space {
+                    height: 13px;
+                    background: rgb(108, 161, 211);
+                    float: left;
+                }
+
+                .group-module-row-color {
+                    background: #9EDAFF;
+                }
+
+                .group-module-row-color:hover {
+                    background: #9EDAFF !important;
+                }
+
+                .right-checkbox-color-red {
+                    background-color: rgba(219, 0, 0, 0.42) !important;
+                }
+
+                .right-checkbox-color-green {
+                    background-color: rgba(88, 219, 0, 0.42) !important;
+                }
+
+                .row-expansion tr, .row-expansion td {
+                    border: 1px solid #DDD !important;
+                }
+
+                #table_module_right {
+                    border-left: 1px solid #EEE;
+                    border-bottom: 1px solid #EEE;
+                }
+
+                #table_module_right td, #table_module_right th {
+                    text-align: center;
+                    padding: 5px 10px;
+                    border-top: 1px solid #EEE;
+                    border-right: 1px solid #EEE;
+                }
+
+                #table_module_right td div {
+                    text-align: left;
+                }
+
+                #table_module_right td div {
+                    text-align: center !important;
+                }
+
+                #table_module_right .ui-button {
+                    font-size: 80% !important;
+                    height: 20px !important;
+                    width: auto !important;
+                }
+
+                #table_module_right .ui-button-text-only .ui-button-text {
+                    padding: .2em 1em !important;
+                }
+
+                #sidebar .ui-widget-content {
+                    border-color: #EEE !important;
+                }
+
+                .user_add_co2, .user_add_co4 {
+                    width: 30%
+                }
+
+                .group_add_co1, .group_add_co3 {
+                    width: 12%
+                }
+
+                .pick-group-pnl {
+                    padding: 5px !important;
+                }
+
+                #chk-description {
+                    margin: 10px 0;
+                }
+
+                #chk-description .ui-chkbox-label {
+                    margin-top: 2px;
+                }
+
+                .ui-tree .ui-tree-container {
+
+                }
+                .ui-datatable table tr {
+                    white-space: nowrap !important;
+                }
+
+                .ui-datatable-scrollable-header-box {
+                    padding: 0 !important;
+                }
+            </style>
+            <!--End Style-->
+
+            <!--Javascript-->
+            <script type="text/javascript" >
+                function clearFiltersTableUserGroup() {
+                    try {
+                        PF('tableLazyUser').clearFilters();
+                        PF('tableLazyUserSelected').clearFilters();
+                    }
+                    catch (err) {
+
+                    }
+                }
+            </script>
+            <!--End Javascript-->
+
+            <p:outputPanel id="pnl_content_center">
+                <div class="left" style="width: 30%">
+                    <div class="#{func_systemgroup.isDisplayBtnConfirm?'hide':null}" >
+                        <!--Tree Group-->
+                        <p:outputPanel rendered="#{not func_systemgroup.isDisplayBtnConfirm}">
+                            <p:panel header="#{PP_MNGGROUP.group_user}" styleClass="pnl-red" >
+                                <div class="left" >
+                                    <p:selectBooleanCheckbox id="child_group_user" value="#{func_systemgroup.mbIsIncludeChild}" label="child_group_user" itemLabel="#{PP_MNGGROUP.child_group_user}" style="margin-top: 15px;" >
+                                        <p:ajax global="true" event="change" process="@this :form_main:child_group_user" listener="#{func_systemgroup.onCheckChildGroupUser}" update=":form_main:panel_control :form_main:table_group_user :form_main:action" />
+                                    </p:selectBooleanCheckbox>
+                                </div>
+                                <div class="right" >
+                                    <p:autoComplete id="group_search" minQueryLength="1" maxResults="10" queryDelay="500" value="#{func_systemgroup.mstrGroupSearch}" completeMethod="#{func_systemgroup.completeGroupSearch}" onfocus="this.select();" onmouseup="return false;" >
+                                        <p:ajax event="itemSelect" listener="#{func_systemgroup.onGroupSearchSelect}" process="@this, group_search" update=":form_main:panel_control :form_main:table_group_user :form_main:action" oncomplete="PF('tableGroupUser').clearFilters();" />
+                                    </p:autoComplete>
+                                </div>
+                                <div class="clear" />
+                                <hr />
+
+                                <p:tree id="tree_group" value="#{func_systemgroup.mtreeGroup}" var="nodeGroup" animate="true" dynamic="true"
+                                        style="overflow: auto; max-height: 400px;" widgetVar="treeModule" selection="#{func_systemgroup.mselectedGroupNode}" selectionMode="single" >
+
+                                    <p:ajax global="true" event="select" listener="#{func_systemgroup.onGroupNodeSelect}" update=":form_main:panel_control :form_main:table_group_user :form_main:action" oncomplete="PF('tableGroupUser').clearFilters();" />
+
+                                    <p:treeNode icon="icon-group">#{nodeGroup.name}</p:treeNode>
+                                </p:tree>
+
+                                <p:watermark for="group_search" value="#{PP_MNGGROUP.type_keyword}" />
+                            </p:panel>
+                        </p:outputPanel>
+                        <!--End Tree Group-->
+                    </div>
+                </div>
+
+                <div class="right" style="min-height: 490px; width: #{func_systemgroup.isDisplayBtnConfirm?'100%':'calc(70% - 5px)'}" >
+                    <!--List User-->
+                    <p:outputPanel rendered="#{not func_systemgroup.isDisplayBtnConfirm}"  >
+                        <p:panel header="#{PP_MNGGROUP.user_list}" styleClass="pnl-blue" >
+                            <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_group_user" widgetVar="tableGroupUser"
+                                         filterDelay="500" filteredValue="#{func_systemgroup.mlistUserFiltered}" value="#{func_systemgroup.mtmpListUser}" var="userGUI"
+                                         emptyMessage="#{PP_SHARED.empty_message}" selectionMode="multiple" selection="#{func_systemgroup.mselectedUser}" rowKey="#{userGUI.user.userId}"
+                                         paginator="true" rows="20" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="20,50,#{func_systemgroup.mtmpListUser.size()}" style="padding-bottom: 2px;" >
+
+                                <p:ajax global="false" process="@this" event="rowSelect" listener="#{func_systemgroup.onUserSelect()}" update=":form_main:panel_control :form_main:action" />
+                                <p:ajax global="false" process="@this" event="contextMenu" listener="#{func_systemgroup.onUserSelect()}" update=":form_main:panel_control" />
+                                <p:ajax global="false" process="@this" event="filter" update=":form_main:table_group_user" listener="#{func_systemgroup.onUserFilter()}" />
+                                <p:ajax global="true" process="@this" event="rowDblselect" disabled="#{not func_systemgroup.getPermission('U')}" update=":grow_main_dt :form_main:pnl_content_center, :form_main:table_pick_group" listener="#{func_systemgroup.changeStateEdit()}" oncomplete="initCheckBoxRight();" />
+                                <p:ajax global="false" process="@this" event="rowToggle" listener="#{func_systemgroup.onRowExpand(userGUI)}" oncomplete="fixRowExpand();" />
+                                <p:ajax global="false" event="sort" process="@this" update="table_group_user" />
+                                <p:ajax global="false" event="page" process="@this" update="table_group_user" />
+
+                                <p:column style="width:3%">
+                                    <p:rowToggler />
+                                </p:column>
+
+                                <p:column headerText="#{PP_MNGGROUP.login_name}" sortBy="#{userGUI.user.userName}" filterBy="#{userGUI.user.userName}" filterMatchMode="contains">
+                                    #{userGUI.user.userName}
+                                </p:column>
+                                <p:column headerText="#{PP_MNGGROUP.full_name}" sortBy="#{func_systemgroup.removeSign(userGUI.user.fullName)}" filterBy="#{userGUI.user.fullName}" filterMatchMode="contains">
+                                    #{userGUI.user.fullName}
+                                </p:column>
+                                <p:column headerText="#{PP_MNGGROUP.status}" sortBy="#{userGUI.user.status}" filterBy="#{func_systemgroup.getUserStatus(userGUI.user.status)}" filterMatchMode="contains">
+                                    #{func_systemgroup.getUserStatus(userGUI.user.status)}
+                                </p:column>
+                                <p:column headerText="#{PP_MNGGROUP.pwd_status}" sortBy="#{func_systemgroup.getUserExpireStatus(userGUI.user.expireStatus)}" filterBy="#{func_systemgroup.getUserExpireStatus(userGUI.user.expireStatus)}"  filterOptions="#{func_systemgroup.mpwdExpireOptions}" filterMatchMode="exact">
+                                    #{func_systemgroup.getUserExpireStatus(userGUI.user.expireStatus)}
+                                </p:column>
+
+                                <p:rowExpansion>
+                                    <p:panelGrid columns="4" styleClass="row-expansion">
+                                        <h:outputText value="#{PP_MNGGROUP.user_name}" />
+                                        <h:outputText value="#{userGUI.user.userName}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.full_name}" />
+                                        <h:outputText value="#{userGUI.user.fullName}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.pwd_expire_status}" />
+                                        <h:outputText value="#{func_systemgroup.getUserExpireStatus(userGUI.user.expireStatus)}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.phone}" />
+                                        <h:outputText value="#{userGUI.user.phone}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.mobile}" />
+                                        <h:outputText value="#{userGUI.user.mobile}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.fax}" />
+                                        <h:outputText value="#{userGUI.user.fax}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.email}" />
+                                        <h:outputText value="#{userGUI.user.email}" />
+                                        <h:outputText value="#{PP_MNGGROUP.address}" />
+                                        <h:outputText value="#{userGUI.user.address}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.last_change_pwd}" />
+                                        <h:outputText value="#{userGUI.user.modifiedPassword}"  >
+                                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="GMT+7"/>
+                                        </h:outputText>
+                                        <h:outputText value="#{PP_MNGGROUP.last_block}" />
+                                        <h:outputText value="#{userGUI.user.lockedDate}"  >
+                                            <f:convertDateTime pattern="dd-MM-yyyy" timeZone="GMT+7"/>
+                                        </h:outputText>
+
+                                        <h:outputText value="#{PP_SHARED.status}" />
+                                        <h:outputText value="#{func_systemgroup.getUserStatus(userGUI.user.status)}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.login_fail_count}" />
+                                        <h:outputText value="#{userGUI.user.failureCount}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.create_id}" />
+                                        <h:outputText value="#{userGUI.user.createdId}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.modified_id}" />
+                                        <h:outputText value="#{userGUI.user.modifiedId}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.clientMacAddr}" />
+                                        <h:outputText value="#{userGUI.user.clientMacAddr}"  />
+                                        <h:outputText value="#{PP_MNGGROUP.clientMacAddr2}" />
+                                        <h:outputText value="#{userGUI.user.clientMacAddr2}"  />
+
+                                        <h:outputText value="#{PP_MNGGROUP.user_group}" />
+                                        <h:outputText value="#{func_systemgroup.getListUserGroup(userGUI.listGroup)}"  />
+                                        <p:spacer width="1" />
+                                        <p:spacer width="1" />
+                                    </p:panelGrid>
+                                </p:rowExpansion>
+                            </p:dataTable>
+                        </p:panel>
+
+                        <p:contextMenu id="context_group_user" for="table_group_user" styleClass="pnl-command">
+                            <p:menuitem id="context_add_user" actionListener="#{func_systemgroup.changeStateAddUser()}" rendered="#{func_systemgroup.getPermission('I')}" process="@this" update=":form_main:pnl_content_center, table_pick_group" value="#{PP_SHARED.add}" icon="ui-icon-circle-plus" oncomplete="initCheckBoxRight();"  />
+                            <p:menuitem id="context_copy_user" actionListener="#{func_systemgroup.changeStateCopy()}" rendered="#{func_systemgroup.getPermission('I')}" process="@this" value="#{PP_SHARED.copy}" update=":form_main:pnl_content_center, table_pick_group" icon="ui-icon-copy" oncomplete="initCheckBoxRight();"  />
+                            <p:menuitem id="context_edit_user" actionListener="#{func_systemgroup.changeStateEdit()}" rendered="#{func_systemgroup.getPermission('U')}" process="@this" value="#{PP_SHARED.edit}" update=":grow_main_dt :form_main:pnl_content_center, table_pick_group" icon="ui-icon-pencil" oncomplete="initCheckBoxRight();"  />
+                            <p:menuitem id="context_del_user" actionListener="#{func_systemgroup.changeStateDel()}" rendered="#{func_systemgroup.getPermission('D')}" process="@this" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                        </p:contextMenu>
+                    </p:outputPanel>
+                    <!--End List User-->
+
+                    <!--View Add Edit User-->
+                    <p:outputPanel id="pnl_user_add" rendered="#{func_systemgroup.isDisplayBtnConfirm and func_systemgroup.action eq 1}" >
+                        <p:panel header="#{func_systemgroup.strDialogHeader}" >
+                            <p:panelGrid columns="4" style="width: 100%" columnClasses="user_add_co1,user_add_co2,user_add_co3,user_add_co4" >
+                                <p:outputLabel for="user_name" value="#{PP_MNGGROUP.user_name}" >
+                                </p:outputLabel>
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE or func_systemgroup.isEDIT}" maxlength="50" required="true" requiredMessage="#{PP_MNGGROUP.account_is_empty}" id="user_name" value="#{func_systemgroup.mtmpUserGUI.user.userName}" validator="ValidatorUserName" validatorMessage="#{PP_MNGGROUP.user_name_not_valid}" style="text-transform: uppercase;" >
+                                    <pe:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+                                </p:inputText>
+
+                                <p:outputLabel styleClass="column-margin" for="full_name" value="#{PP_MNGGROUP.full_name}" >
+                                </p:outputLabel>
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="30" id="full_name" value="#{func_systemgroup.mtmpUserGUI.user.fullName}" required="true" requiredMessage="#{PP_MNGGROUP.full_name_is_empty}" />
+
+                                <p:outputLabel for="password" value="#{PP_MNGGROUP.new_password}" />
+                                <p:password disabled="#{func_systemgroup.isDISABLE}" maxlength="100" id="password" value="#{func_systemgroup.mstrUserNewPassword}" required="#{func_systemgroup.isADD or func_systemgroup.isCOPY}" requiredMessage="#{PP_MNGGROUP.password_is_empty}" />
+
+                                <p:outputLabel styleClass="column-margin" for="repassword" value="#{PP_MNGGROUP.re_new_password}" />
+                                <p:password disabled="#{func_systemgroup.isDISABLE}" maxlength="100" id="repassword" value="#{func_systemgroup.mstrUserReNewPassword}" required="#{func_systemgroup.isADD or func_systemgroup.isCOPY}" requiredMessage="#{PP_MNGGROUP.repassword_is_empty}" />
+
+                                <p:outputLabel for="pwd_expire_status" value="#{PP_MNGGROUP.pwd_expire_status}" />
+                                <p:selectOneMenu disabled="#{func_systemgroup.isDISABLE}" id="pwd_expire_status" value="#{func_systemgroup.mtmpUserGUI.user.expireStatus}">
+                                    <f:selectItem itemLabel="#{PP_MNGGROUP.not_expire}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{PP_MNGGROUP.expire}" itemValue="0" />
+                                    <f:selectItem itemLabel="#{PP_MNGGROUP.never_expire}" itemValue="2" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel styleClass="column-margin" for="phone" value="#{PP_MNGGROUP.phone}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="10" id="phone" value="#{func_systemgroup.mtmpUserGUI.user.phone}" validator="ValidatorNumber" validatorMessage="#{PP_MNGGROUP.phone_is_not_valid}" >
+                                    <pe:keyFilter regEx="/[\d\-]/" />
+                                </p:inputText>
+
+                                <p:outputLabel for="mobile" value="#{PP_MNGGROUP.mobile}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="11" id="mobile" value="#{func_systemgroup.mtmpUserGUI.user.mobile}" validator="ValidatorNumber" validatorMessage="#{PP_MNGGROUP.mobile_is_not_valid}" required="true" requiredMessage="#{PP_MNGGROUP.mobile_is_empty}" >
+                                    <pe:keyFilter regEx="/[\d\-]/" />
+                                </p:inputText>
+
+                                <p:outputLabel styleClass="column-margin" for="fax" value="#{PP_MNGGROUP.fax}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="10" id="fax" value="#{func_systemgroup.mtmpUserGUI.user.fax}" validator="ValidatorNumber" validatorMessage="#{PP_MNGGROUP.fax_is_not_valid}" >
+                                    <pe:keyFilter regEx="/[\d\-]/" />
+                                </p:inputText>
+
+                                <p:outputLabel for="email" value="#{PP_MNGGROUP.email}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="50" id="email" value="#{func_systemgroup.mtmpUserGUI.user.email}" validator="ValidatorUserEmail" validatorMessage="#{PP_MNGGROUP.email_is_not_valid}" >
+                                    <pe:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+                                </p:inputText>
+
+                                <p:outputLabel styleClass="column-margin" for="address" value="#{PP_MNGGROUP.address}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" maxlength="100" id="address" value="#{func_systemgroup.mtmpUserGUI.user.address}" />
+
+                                <p:outputLabel for="clientMacAddr" value="#{PP_MNGGROUP.clientMacAddr}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" style="text-transform: uppercase;" maxlength="100" id="clientMacAddr" value="#{func_systemgroup.mtmpUserGUI.user.clientMacAddr}" />
+                                <p:outputLabel styleClass="column-margin" for="clientMacAddr2" value="#{PP_MNGGROUP.clientMacAddr2}" />
+                                <p:inputText disabled="#{func_systemgroup.isDISABLE}" style="text-transform: uppercase;" maxlength="100" id="clientMacAddr2" value="#{func_systemgroup.mtmpUserGUI.user.clientMacAddr2}" />
+
+                                <p:outputLabel for="user_status" value="#{PP_SHARED.status}" />
+                                <p:selectOneMenu disabled="#{func_systemgroup.isDISABLE}" id="user_status" value="#{func_systemgroup.mtmpUserGUI.user.status}" >
+                                    <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                    <f:selectItem itemLabel="#{PP_MNGGROUP.system}" itemValue="2" />
+                                </p:selectOneMenu >
+
+                                <p:outputLabel styleClass="column-margin" for="pick_group_txt" value="#{PP_MNGGROUP.user_group}" />
+                                <p:inputText id="pick_group_txt" disabled="#{func_systemgroup.isDISABLE}" required="true" requiredMessage="#{PP_MNGGROUP.user_group}#{PP_SHARED.can_not_be_empty}" value="#{func_systemgroup.strUserGroupList}" style="cursor: pointer" onclick="PF('dialogPickGroup').show();" >
+                                    <pe:keyFilter regEx="/[]/i" />
+                                </p:inputText>
+
+                                <p:outputLabel rendered="false" for="branch" value="#{PP_MNGGROUP.branch}" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" rendered="false" value="#{func_systemgroup.mselectedBranch}" id="branch" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{func_systemgroup.mlistBranch}" var="branch" itemLabel="#{branch.branchCode} - #{branch.branchName}" itemValue="#{branch.branchCode}" />
+                                    <p:ajax global="false" event="change" listener="#{func_systemgroup.onBranchChange}" update="district" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel rendered="false" styleClass="column-margin" for="district" value="#{PP_MNGGROUP.district}" />
+                                <p:selectOneMenu filter="true" filterMatchMode="contains" rendered="false" value="#{func_systemgroup.mselectedDistrict}" id="district" >
+                                    <f:selectItem itemLabel="" itemValue="" />
+                                    <f:selectItems value="#{func_systemgroup.mlistDistrict}" var="district" itemLabel="#{district.districtCode} - #{district.name}" itemValue="#{district.districtCode}" />
+                                </p:selectOneMenu>
+
+                                <p:focus context="pnl_user_add" />
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:watermark for="pick_group_txt" value="#{PP_SHARED.click_to_choose}" />
+                    </p:outputPanel>
+                    <!--End View Add Edit User-->
+
+                    <!--View Add Edit Group-->
+                    <p:outputPanel id="pnl_group_add" rendered="#{func_systemgroup.isDisplayBtnConfirm and func_systemgroup.action eq 2}" >
+                        <p:panel header="#{func_systemgroup.strDialogHeader}" >
+                            <p:panelGrid columns="4" style="width: 100%" columnClasses="group_add_co1,,group_add_co3">
+                                <p:outputLabel for="group_name" value="#{PP_MNGGROUP.group_name}" >
+                                </p:outputLabel>
+                                <p:inputText maxlength="50" required="true" disabled="#{func_systemgroup.isDISABLE}" requiredMessage="#{PP_MNGGROUP.group_name_is_empty}" id="group_name" value="#{func_systemgroup.mtmpGroup.name}" />
+
+                                <p:outputLabel styleClass="column-margin" for="group_parent" value="#{PP_MNGGROUP.parent_group}" />
+                                <p:inputText id="group_parent" disabled="#{func_systemgroup.isDISABLE}" value="#{func_systemgroup.mselectedPickParentGroup.group.name}" required="true" requiredMessage="#{PP_MNGGROUP.parent_group}#{PP_SHARED.can_not_be_empty}" style="cursor: pointer" onclick="PF('dialogPickParentGroup').show();" >
+                                    <pe:keyFilter regEx="/[]/i" />
+                                </p:inputText>
+
+                                <p:outputLabel for="group_status" value="#{PP_SHARED.status}" />
+                                <p:selectOneMenu disabled="#{func_systemgroup.isDISABLE}" id="group_status" value="#{func_systemgroup.mtmpGroup.status}" >
+                                    <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                </p:selectOneMenu >
+
+                                <p:outputLabel styleClass="column-margin" for="description" value="#{PP_SHARED.description}" />
+                                <p:inputText id="description" disabled="#{func_systemgroup.isDISABLE}" maxlength="100" value="#{func_systemgroup.mtmpGroup.description}" />
+
+                                <p:focus context="pnl_group_add" />
+                            </p:panelGrid>
+                        </p:panel>
+                    </p:outputPanel>
+
+                    <p:spacer height="5" />
+                    <p:outputPanel rendered="#{func_systemgroup.isDisplayBtnConfirm and func_systemgroup.action eq 2}">
+                        <p:panel id="table_user" header="#{PP_MNGGROUP.add_user_to_group}" >
+                            <div style="overflow: auto; float: left; width: 50%" >
+                                <p:dataTable paginatorPosition="top" paginatorAlwaysVisible="true" id="table_lazy_user" widgetVar="tableLazyUser" lazy="true"
+                                             value="#{func_systemgroup.mlistUserGroup}" filteredValue="#{func_systemgroup.mlistUserFiltered}" var="userLazyItem"
+                                             emptyMessage="#{PP_SHARED.empty_message}" rowKey="#{userLazyItem.user.userId}" selection="#{func_systemgroup.mselectedUserLazy}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,20" paginator="true" rows="10" style="padding-bottom: 1px; min-height: 436px; background: #F3F3F3;"
+                                             disabledSelection="#{func_systemgroup.isDISABLE}" >
+
+                                    <p:ajax process="@this" global="false" event="rowSelectCheckbox" listener="#{func_systemgroup.onSelectedBts}" />
+                                    <p:ajax process="@this" global="false" event="rowUnselectCheckbox" listener="#{func_systemgroup.onSelectedBts}" />
+                                    <p:ajax process="@this" global="false" event="toggleSelect" listener="#{func_systemgroup.onSelectedBts}" />
+                                    <p:ajax process="@this" global="false" event="sort" />
+                                    <p:ajax process="@this" global="false" event="page" />
+                                    <p:ajax process="@this" global="false" event="filter" />
+
+                                    <f:facet name="header" >
+                                        #{PP_MNGGROUP.all_user}(#{func_systemgroup.mlistUserGroup.size()})
+                                    </f:facet>
+
+                                    <p:column selectionMode="multiple" style="width: 20px" />
+
+                                    <p:column headerText="#{PP_MNGGROUP.user_name}" filterBy="#{userLazyItem.user.userName}" filterMatchMode="contains" >
+                                        #{userLazyItem.user.userName}
+                                    </p:column>
+                                    <p:column headerText="#{PP_MNGGROUP.full_name}" filterBy="#{userLazyItem.user.fullName}" filterMatchMode="contains" >
+                                        #{userLazyItem.user.fullName}
+                                    </p:column>
+
+                                    <f:facet name="footer" >
+                                        <p:commandButton process="@this" value="#{PP_MNGGROUP.move_user}" actionListener="#{func_systemgroup.handMoveUser}" disabled="#{func_systemgroup.isDISABLE}"  update=":form_main:table_lazy_user :form_main:table_lazy_user_selected" oncomplete="PF('tableLazyUser').clearFilters(); PF('tableLazyUserSelected').clearFilters();" icon="ui-icon-seek-next" iconPos="right" />
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+
+                            <div style="overflow: auto; float: left; width: calc(50% - 5px); margin-left: 5px;" >
+                                <p:dataTable paginatorPosition="top" paginatorAlwaysVisible="true" id="table_lazy_user_selected" widgetVar="tableLazyUserSelected" lazy="true"
+                                             value="#{func_systemgroup.mlistUserGroupSelected}" filteredValue="#{func_systemgroup.mlistUserLazySelectedFiltered}" var="userLazyItemSelected"
+                                             emptyMessage="#{PP_SHARED.empty_message}" rowKey="#{userLazyItemSelected.user.userId}" selection="#{func_systemgroup.mselectedUserLazySelected}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,20" paginator="true" rows="10" style="padding-bottom: 1px; min-height: 436px; background: #F3F3F3;"
+                                             disabledSelection="#{func_systemgroup.isDISABLE}" >
+
+                                    <p:ajax process="@this" global="false" event="rowSelectCheckbox" listener="#{func_systemgroup.onSelectedBtsSelected}" />
+                                    <p:ajax process="@this" global="false" event="rowUnselectCheckbox" listener="#{func_systemgroup.onSelectedBtsSelected}" />
+                                    <p:ajax process="@this" global="false" event="toggleSelect" listener="#{func_systemgroup.onSelectedBtsSelected}" />
+                                    <p:ajax process="@this" global="false" event="sort" />
+                                    <p:ajax process="@this" global="false" event="page" />
+                                    <p:ajax process="@this" global="false" event="filter" />
+
+                                    <f:facet name="header" >
+                                        #{PP_MNGGROUP.user_in_group}(#{func_systemgroup.mlistUserGroupSelected.size()})
+                                    </f:facet>
+
+                                    <p:column selectionMode="multiple" style="width: 20px" />
+
+                                    <p:column headerText="#{PP_MNGGROUP.user_name}" filterBy="#{userLazyItemSelected.user.userName}" filterMatchMode="contains" >
+                                        #{userLazyItemSelected.user.userName}
+                                    </p:column>
+                                    <p:column headerText="#{PP_MNGGROUP.full_name}" filterBy="#{userLazyItemSelected.user.fullName}" filterMatchMode="contains" >
+                                        #{userLazyItemSelected.user.fullName}
+                                    </p:column>
+
+                                    <f:facet name="footer" >
+                                        <p:commandButton process="@this" value="#{PP_MNGGROUP.move_user}" actionListener="#{func_systemgroup.handMoveUserSelected}" disabled="#{func_systemgroup.isDISABLE}" update=":form_main:table_lazy_user :form_main:table_lazy_user_selected :grow_main_dt" oncomplete="PF('tableLazyUser').clearFilters(); PF('tableLazyUserSelected').clearFilters();" styleClass="back" icon="ui-icon-seek-prev" />
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+                            <div class="clear" />
+                        </p:panel>
+                    </p:outputPanel>
+
+                    <!--Command Button-->
+                    <div id="box_control" class="pnl" style="margin-top: 5px;">
+                        <p:outputPanel id="panel_control" >
+                            <p:outputPanel rendered="#{not func_systemgroup.isDisplayBtnConfirm}">
+                                <p:menuButton id="btn_add"  value="#{PP_SHARED.add}" rendered="#{func_systemgroup.getPermission('I')}" >
+                                    <p:menuitem actionListener="#{func_systemgroup.changeStateAddUser()}" process="@this" update=":form_main:pnl_content_center table_pick_group" value="Thêm NSD" icon="ui-icon-person" oncomplete="initCheckBoxRight();"  />
+                                    <p:menuitem actionListener="#{func_systemgroup.changeStateAddGroup()}" process="@this" update=":form_main:pnl_content_center, table_pick_parent_group" value="Thêm nhóm" icon="icon-group" oncomplete="initCheckBoxRight(); clearFiltersTableUserGroup();" />
+                                </p:menuButton>
+                                <p:commandButton id="btn_copy" disabled="#{not func_systemgroup.isSelected or func_systemgroup.isRootTree}" actionListener="#{func_systemgroup.changeStateCopy()}" rendered="#{func_systemgroup.getPermission('I')}" process="@this" styleClass="btn-green btn-margin" value="#{PP_SHARED.copy}" update=":form_main:pnl_content_center table_pick_group, table_pick_parent_group" icon="ui-icon-copy" oncomplete="initCheckBoxRight();clearFiltersTableUserGroup();"  />
+                                <p:commandButton id="btn_edit" disabled="#{not func_systemgroup.isSelected or func_systemgroup.isRootTree}" actionListener="#{func_systemgroup.changeStateEdit()}" rendered="#{func_systemgroup.getPermission('U')}" process="@this" styleClass="btn-cyan btn-margin" value="#{PP_SHARED.edit}" update=":form_main:pnl_content_center table_pick_group, table_pick_parent_group :grow_main_dt" icon="ui-icon-pencil" oncomplete="initCheckBoxRight();clearFiltersTableUserGroup();"  />
+                                <p:commandButton id="btn_del" disabled="#{not func_systemgroup.isSelected or func_systemgroup.isRootTree}" actionListener="#{func_systemgroup.changeStateDel()}" rendered="#{func_systemgroup.getPermission('D')}" process="@this" styleClass="btn-red btn-margin" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{func_systemgroup.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_ok" actionListener="#{func_systemgroup.handOK()}" rendered="#{func_systemgroup.isVIEW ? false:true}" process="@this pnl_user_add, pnl_group_add, table_user, table_module_right" styleClass="btn-margin" value="#{PP_SHARED.ok}" update="pnl_group_add, pnl_user_add, pick_group_txt, tree_group, table_user :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{func_systemgroup.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update=":form_main:pnl_content_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="pnl_user_add, pnl_group_add" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+                    <!--End Command Button-->
+
+                    <!--Module right-->
+                    <p:spacer height="20" />
+                    <p:outputPanel id="panel_module_right" rendered="#{func_systemgroup.isDisplayBtnConfirm}" >
+                        <p:panelGrid columns="2" style="width: auto; margin-bottom: -40px; margin-left: 140px;" >
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" id="app_code" value="#{func_systemgroup.mstrAppCode}" style="width: 200px !important; text-align: left;" >
+                                <f:selectItems value="#{func_systemgroup.mlistAppGUI}" var="app" itemLabel="#{app.name}" itemValue="#{app.code}" />
+                                <p:ajax process="@this :form_main:app_code" event="change" listener="#{func_systemgroup.onAppChange}" update=":form_main:panel_module_right" oncomplete="initCheckBoxRight();" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:panel header="#{PP_MNGGROUP.access_right}"  >
+                            <p:dataTable id="table_module_right" widgetVar="tableModuleRight" value="#{func_systemgroup.mlistModuleRight}" var="module"
+                                         rowStyleClass="#{module.objType eq 'G' ? 'group-module-row-color' : ''}">
+                                <f:facet name="header" >
+
+                                </f:facet>
+
+                                <p:column headerText="#{PP_MNGMODULE.module_name}" >
+                                    <div style="width: #{(module.level - 1) * 30}px;" class="level-space" />
+                                    <div class="icon-level left" >
+                                        #{module.moduleName}
+                                    </div>
+                                    <div class="clear" />
+                                </p:column>
+
+                                <p:column style="width: 10%" >
+                                    <f:facet name="header" class="check-all">
+                                        <div style="margin-bottom: 5px">Check all</div>
+                                        <pe:triStateCheckbox value="0" disabled="true" styleClass="check-all left" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check" />
+                                    </f:facet>
+                                    <pe:triStateCheckbox rendered="#{func_systemgroup.mlistModuleRight.get(module.index).listAccess.size() != 0}" value="0" onchange="checkAllCollumns(this.id, this.value);"  styleClass="check-col" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check"/>
+                                </p:column>
+
+                                <p:columns value="#{func_systemgroup.mlistModuleRight.get(module.index).listAccess}" var="rightItem" columnIndexVar="colIndex" style="width: 10%" >
+                                    <f:facet name="header" >
+                                        <div style="margin-bottom: 5px">#{rightItem.name}</div>
+                                        <pe:triStateCheckbox value="0" disabled="true" styleClass="check-row left" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check" />
+                                    </f:facet>
+                                    <pe:triStateCheckbox styleClass="right-chkbox" value="#{func_systemgroup.mlistModuleRight.get(module.index).listAccess.get(colIndex).access}" rendered="#{func_systemgroup.mlistModuleRight.get(module.index).listAccess.get(colIndex).active}" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check" />
+                                </p:columns>
+
+                                <f:facet name="footer" >
+                                    <div id="chk-description">
+                                        <pe:triStateCheckbox itemLabel="#{PP_MNGMODULE.deny}" value="0" disabled="true" stateThreeIcon="ui-icon-radio-off" />
+                                        <pe:triStateCheckbox styleClass="column-margin" itemLabel="#{PP_MNGMODULE.allow}" value="1" disabled="true" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check" />
+                                        <pe:triStateCheckbox styleClass="column-margin" itemLabel="#{PP_MNGMODULE.blank}" value="2" disabled="true" stateThreeIcon="ui-icon-radio-off" stateTwoIcon="ui-icon-circle-check" />
+                                    </div>
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:outputPanel>
+                    <!--Module right-->
+
+                </div>
+                <div class="clear" />
+
+                <p:inputText id="action" type="hidden" value="#{func_systemgroup.action}" />
+            </p:outputPanel>
+
+            <p:dialog id="dialog_pick_group" widgetVar="dialogPickGroup" header="#{PP_MNGGROUP.pick_group}" modal="true" resizable="false" draggable="true" showEffect="clip" hideEffect="clip" width="600" >
+                <p:dataTable paginatorPosition="top" id="table_pick_group" widgetVar="tablePickGroup" paginator="true"
+                             value="#{func_systemgroup.mlistGroupGUI.subList(1, func_systemgroup.mlistGroupGUI.size())}" filteredValue="#{func_systemgroup.mlistPickGroupFiltered}"
+                             var="pickGroupItem" emptyMessage="#{PP_SHARED.empty_message}" rowKey="#{pickGroupItem.group.groupId}"  selection="#{func_systemgroup.mselectedPickGroup}"
+                             rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
+                             >
+
+                    <p:ajax event="filter" global="false" />
+                    <p:ajax event="page" global="false" />
+
+                    <p:column selectionMode="multiple" style="width: 50px;" />
+
+                    <p:column filterBy="#{pickGroupItem.group.name}" filterMatchMode="contains" style="width: 450px;" headerText="#{PP_MNGGROUP.group_name}" >
+                        <div style="width: #{(pickGroupItem.group.level - 1) * 30}px;" class="level-space" />
+                        <div class="icon-level left" >
+                            #{pickGroupItem.group.name}
+                        </div>
+                        <div class="clear" />
+                    </p:column>
+                </p:dataTable>
+
+                <div style="width: 100%; margin-top: 5px;" >
+                    <p:commandButton process="@this :form_main:table_pick_group" update="pick_group_txt" oncomplete="PF('dialogPickGroup').hide();" actionListener="#{func_systemgroup.onPickGroup()}" value="#{PP_SHARED.ok}" icon="ui-icon-circle-check" />
+                    <p:commandButton value="#{PP_SHARED.cancel}" type="button" onclick="PF('dialogPickGroup').hide();" icon="ui-icon-circle-close" styleClass="back btn-margin" />
+                </div>
+            </p:dialog>
+
+            <p:dialog id="dialog_pick_parent_group" widgetVar="dialogPickParentGroup" header="#{PP_MNGGROUP.pick_group}" modal="true" resizable="false" draggable="true" showEffect="clip" hideEffect="clip" width="600" >
+                <p:dataTable paginatorPosition="top" id="table_pick_parent_group" widgetVar="tablePickParentGroup" paginator="true"
+                             value="#{func_systemgroup.mlistGroupGUI.subList(1, func_systemgroup.mlistGroupGUI.size())}" filteredValue="#{func_systemgroup.mlistPickParentGroupFiltered}"
+                             var="pickParentGroupItem" emptyMessage="#{PP_SHARED.empty_message}" rowKey="#{pickParentGroupItem.group.groupId}" selection="#{func_systemgroup.mselectedPickParentGroup}"
+                             rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}" selectionMode="single"
+                             >
+
+                    <p:ajax event="filter" global="false" />
+                    <p:ajax event="page" global="false" />
+
+                    <p:column selectionMode="single" style="width: 50px;" />
+
+                    <p:column filterBy="#{pickParentGroupItem.group.name}" filterMatchMode="contains" style="width: 450px;" headerText="#{PP_MNGGROUP.group_name}" >
+                        <div style="width: #{(pickParentGroupItem.group.level - 1) * 30}px;" class="level-space" />
+                        <div class="icon-level left" >
+                            #{pickParentGroupItem.group.name}
+                        </div>
+                        <div class="clear" />
+                    </p:column>
+                </p:dataTable>
+
+                <div style="width: 100%; margin-top: 5px;" >
+                    <p:commandButton process="@this :form_main:table_pick_parent_group" update="group_parent" oncomplete="PF('dialogPickParentGroup').hide();" actionListener="#{func_systemgroup.onPickParentGroup()}" value="#{PP_SHARED.ok}" icon="ui-icon-circle-check" />
+                    <p:commandButton value="#{PP_SHARED.cancel}" type="button" onclick="PF('dialogPickParentGroup').hide();" icon="ui-icon-circle-close" styleClass="back btn-margin" />
+                </div>
+            </p:dialog>
+
+            <!--Dialog Confirm Dialog-->
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon ui-icon-circle-check" process="@this" id="confirm" value="#{PP_SHARED.yes}" update="tree_group, table_group_user, panel_control :grow_main_dt" actionListener="#{func_systemgroup.handDelete}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+            <!--End Dialog Confirm Dialog-->
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/styleAttach.css" />
+            <p:outputPanel id="panel_center" >
+                <h:panelGrid columns="3">
+                    <h:outputText value="Upload"/>
+                    <p:fileUpload
+                        dragDropSupport="true"
+                        auto="true"
+                        styleClass="styleAttachDoc"
+                        />
+                </h:panelGrid>
+                <div class="styleAttachDoc">
+                    <p:commandButton ajax="false" icon="download" styleClass="icon-size"/>
+                </div>
+            </p:outputPanel>
+
+        </ui:composition>
+    </h:body>
+</html>

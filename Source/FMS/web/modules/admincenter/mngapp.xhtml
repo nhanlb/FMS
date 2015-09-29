@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>     
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" > 
+                    <p:panel header="#{PP_MNGAPP.app_info}" style=" margin-bottom: 10px;" >
+                        <p:panelGrid id="panel_add_app" style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+                            <p:outputLabel for="app_name" value="#{PP_MNGAPP.app_name}" />
+                            <p:inputText maxlength="255" id="app_name" value="#{func_mng_app.mtmpApp.name}" disabled="#{func_mng_app.isDISABLE}" required="true" requiredMessage="#{PP_MNGAPP.app_name_cannot_empty}" />
+                            <p:outputLabel for="app_code" value="#{PP_MNGAPP.app_code}" />
+                            <p:inputText maxlength="50" id="app_code" value="#{func_mng_app.mtmpApp.code}" validator="ValidatorAlphaNum" validatorMessage="#{PP_MNGAPP.app_code}#{PP_SHARED.is_not_valid}" disabled="#{func_mng_app.isDISABLE}" required="true" requiredMessage="#{PP_MNGAPP.app_code_cannot_empty}" >
+                                <pe:keyFilter regEx="/[a-z0-9_]/i" />
+                            </p:inputText>
+
+                            <p:outputLabel for="ord" value="#{PP_MNGAPP.app_ord}" />
+                            <p:inputText maxlength="5" id="ord" value="#{func_mng_app.mtmpApp.ord}" disabled="#{func_mng_app.isDISABLE}"  >
+                                <pe:keyFilter regEx="/[0-9_]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="app_status" value="#{PP_MNGAPP.app_status}" />
+                            <p:selectOneMenu id="app_status" value="#{func_mng_app.mtmpApp.status}" disabled="#{func_mng_app.isDISABLE}" >
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                            </p:selectOneMenu>
+
+                            <p:focus context=":form_main:panel_add_app" />
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not func_mng_app.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_add" rendered="#{func_mng_app.getPermission('I')}" actionListener="#{func_mng_app.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{func_mng_app.getPermission('I')}" actionListener="#{func_mng_app.changeStateCopy()}" disabled="#{not func_mng_app.isSelectedApp}" process="@this" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{func_mng_app.getPermission('U')}" actionListener="#{func_mng_app.changeStateEdit()}" disabled="#{not func_mng_app.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{func_mng_app.getPermission('D')}" actionListener="#{func_mng_app.changeStateDel()}" disabled="#{not func_mng_app.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{func_mng_app.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_ok" actionListener="#{func_mng_app.handOK()}" process="@this :form_main:panel_add_app" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{func_mng_app.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_add_app" />
+                                </p:commandButton>  
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>                           
+
+                    <p:panel header="#{PP_MNGAPP.app_list}" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_app" widgetVar="tableApp" value="#{func_mng_app.mlistApp}" filteredValue="#{func_mng_app.mlistAppFiltered}" var="app" 
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{func_mng_app.isDisplayBtnConfirm}" selectionMode="multiple" rowKey="#{app.appId}" selection="#{func_mng_app.mselectedApp}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{func_mng_app.mlistApp.size()}" paginator="true" rows="10" >
+
+                            <p:ajax global="false" event="rowSelect" listener="#{func_mng_app.onRowSelect}" update=":form_main:panel_add_app" />
+                            <p:ajax global="false" event="rowUnselect" listener="#{func_mng_app.onRowSelect}" update=":form_main:panel_add_app"  />
+                            <p:ajax global="false" event="sort" />
+                            <p:ajax global="false" event="page" />
+                            <p:ajax global="false" event="filter" />                              
+
+                            <p:column headerText="#{PP_MNGAPP.app_code}" sortBy="#{app.code}" filterBy="#{app.code}" filterMatchMode="contains" >
+                                #{app.code}
+                            </p:column>                                 
+
+                            <p:column headerText="#{PP_MNGAPP.app_name}" sortBy="#{app.name}" filterBy="#{app.name}" filterMatchMode="contains" >
+                                #{app.name}
+                            </p:column>  
+
+                            <p:column headerText="#{PP_MNGAPP.app_ord}" sortBy="#{app.ord}" filterBy="#{app.ord}" filterMatchMode="contains" >
+                                #{app.ord}
+                            </p:column>                                  
+
+                            <p:column headerText="#{PP_MNGAPP.app_status}" sortBy="#{app.status}" >
+                                <h:outputText styleClass="lbl-green" rendered="#{app.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{app.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>                                 
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{func_mng_app.handDelete}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" /> 		
+            </p:confirmDialog>   
+
+        </ui:composition>
+    </h:body>
+</html>

@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_NATIONAL.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel id="panel_national" header="#{PP_NATIONAL.nationalInfo}" styleClass="pnl-red" style=" margin-bottom: 10px;" >
+                        <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                            <p:outputLabel for="name" value="#{PP_NATIONAL.nationalName}" />
+                            <p:inputText id="name" value="#{nationalController.national.nationalName}" disabled="#{nationalController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_NATIONAL.msg_req_nationalName}" maxlength="200">
+                            </p:inputText>
+                            
+                            <p:outputLabel for="code" value="#{PP_NATIONAL.nationalCode}" />
+                            <p:inputText id="code" value="#{nationalController.national.nationalCode}" disabled="#{nationalController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_NATIONAL.msg_req_nationalCode}" maxlength="20">
+                                 <pe:keyFilter regEx="/[a-z0-9_]/i"/>
+                            </p:inputText>
+                            
+                            <p:outputLabel for="status" value="#{PP_NATIONAL.status}" />
+                            <p:selectOneMenu id="status" value="#{nationalController.national.status}" disabled="#{nationalController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_NATIONAL.msg_req_status}">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:focus context=":form_main:panel_national" />
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not nationalController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_add"/>
+                                <p:commandButton id="btn_add" rendered="#{nationalController.getPermission('I')}" actionListener="#{nationalController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tblNational').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{nationalController.getPermission('I')}" actionListener="#{nationalController.changeStateCopy()}" disabled="#{not nationalController.isSelectedApp}" process="@this" onclick="PF('tblNational').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{nationalController.getPermission('U')}" actionListener="#{nationalController.changeStateEdit()}" disabled="#{not nationalController.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{nationalController.getPermission('D')}" actionListener="#{nationalController.changeStateDel()}" disabled="#{not nationalController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{nationalController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_ok"/>
+                                <p:commandButton id="btn_ok" actionListener="#{nationalController.handOK()}" process="@this :form_main:panel_national" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{nationalController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_national" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_NATIONAL.national_list}" styleClass="pnl-blue" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_national" widgetVar="tblNational" value="#{nationalController.lstNational}" var="national"
+                                     filteredValue="#{nationalController.lstNationalFiltered}"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{nationalController.isDisplayBtnConfirm}" selectionMode="single"
+                                     rowKey="#{national.nationalId}" selection="#{nationalController.mselectedNational}"
+                                     rowIndexVar="stt"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="(Bản ghi thứ: {startRecord} - {endRecord} trong {totalRecords}, Trang {currentPage}/{totalPages})"
+                                     rowsPerPageTemplate="5,10,15,#{nationalController.lstNational.size()}" paginator="true" rows="10" >
+
+                            <p:ajax event="rowSelect" process="@this" listener="#{nationalController.onRowSelect}" update=":form_main:panel_national" />
+
+                            <p:column headerText="Stt">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{PP_NATIONAL.nationalName}" sortBy="#{national.nationalName}" filterBy="#{national.nationalName}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{national.nationalName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NATIONAL.nationalCode}" sortBy="#{national.nationalCode}" filterBy="#{national.nationalCode}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{national.nationalCode}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_NATIONAL.status}" sortBy="#{national.status}" filterBy="#{national.status}"
+                                      filterMatchMode="exact" width="150" >
+                                <f:facet name="filter" >
+                                    <p:selectOneMenu onchange="PF('tblNational').filter();" style="float: left !important;">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText styleClass="lbl-green" rendered="#{national.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{national.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" appendTo=":form_main" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{nationalController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tblNational').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

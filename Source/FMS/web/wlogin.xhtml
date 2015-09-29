@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+        <title>FMS | Đăng nhập</title>
+        <link rel="Shortcut Icon" href="#{request.contextPath}/resources/apple-touch-icon-precomposed.png" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/style.css" />
+    </h:head>
+    <h:body>
+        <style type="text/css">
+            html, body {
+                padding: 0px !important;
+                background: #2A94D6;
+                height: 98%;
+            }
+        </style>
+
+        <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
+
+        <table class="tablewrapper">
+            <tr>
+                <td>
+                    <h:form id="form_login" >
+                        <div id="left-side" class="left" >
+                            <div id="logo"></div>
+                            <table style="width: 90%; margin: 0 auto;">
+                                <tr>
+                                    <td>
+                                        <div id="box-username" class="ui-corner-all" >
+                                            <p:inputText id="username" styleClass="ui-shadow" rendered="#{not cas.isCasEnable()}" style="text-transform: uppercase;" requiredMessage="Chưa nhập tài khoản" value="#{secuser.username}" required="true" label="Tài khoản" tabindex="1" autocomplete="off" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div id="box-password" class="ui-corner-all" >
+                                            <p:password id="password" rendered="#{not cas.isCasEnable()}" requiredMessage="Chưa nhập mật khẩu" value="#{secuser.password}" required="true" label="Mật khẩu" tabindex="2" autocomplete="off" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p:selectBooleanCheckbox rendered="#{not cas.isCasEnable() and secuser.enableTOS}" tabindex="4" itemLabel="Tôi đồng ý với các điều khoản sủ dụng" value="#{secuser.mbAcceptRuler}" style="width: 100%" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p:commandButton rendered="#{not cas.isCasEnable()}" action="#{secuser.validateUser()}" value="Đăng nhập" icon="ui-icon-key" id="login_button" tabindex="5" process="form_login" update="form_login, :messages" style="width: 100%; white-space: nowrap;" />
+                                    </td>
+                                </tr>
+                            </table>
+                            <p:watermark rendered="#{not cas.isCasEnable()}" for="username" value="TÊN ĐĂNG NHẬP" />
+                            <p:watermark rendered="#{not cas.isCasEnable()}" for="password" value="MẬT KHẨU" />
+                            <p:focus context="form_login" />
+                        </div>
+                        <div id="right-side" class="left" >
+                            <div id="news" >
+                                <p:scrollPanel style="height: 100%; background: transparent;">
+                                    <ui:include src="news.xhtml" />
+                                </p:scrollPanel>
+                            </div>
+                        </div>
+                    </h:form>
+                </td>
+            </tr>
+        </table>
+
+        <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+        <p:dialog id="status_dialog" modal="true" widgetVar="statusDialog" draggable="false" closable="false" resizable="false" >
+            <p:graphicImage value="/resources/images/primefaces/gif-load.gif" />
+        </p:dialog>
+    </h:body>
+</html>

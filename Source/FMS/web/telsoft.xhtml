@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      >
+    <f:view locale="#{main.locale}" >
+        <h:head>
+            <style type="text/css">
+                .accesskeyts {
+                    text-decoration: underline;
+                }
+                a span.accesskey {
+                    border-bottom: 1px solid;
+                }
+
+                #status_dialog .ui-dialog-titlebar {
+                    display: none;
+                }
+            </style>
+            <title>Quản lý xăng dầu | #{empty main.moduleName ? 'HOME' : main.moduleName}</title>
+            <link rel="Shortcut Icon" href="#{request.contextPath}/resources/apple-touch-icon-precomposed.png" type="image/x-icon" />
+            <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/style.css" />
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/maskedinput.js" />
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/script.js" />
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/jquery.cookie.js" />
+            <script type="text/javascript" src="#{request.contextPath}/resources/js/jquery.maskMoney.js" />
+            <script type="text/javascript">
+                //Logout function
+                var strContexPath = "#{request.contextPath}";
+
+                function logout() {
+                    var strCasServer = "#{cas.getCasServer()}";
+                    var strRootSite = $(location).attr('protocol') + "//" + $(location).attr('host');
+
+                    if ("#{cas.getCasEnable()}" === "0") {
+                        location.href = strRootSite + strContexPath;
+
+                    } else {
+                        location.href = strCasServer + '/logout?service=' + strCasServer + '/cas/login?TARGET=' + strRootSite + strContexPath;
+                    }
+                }
+            </script>
+
+            <script type="text/javascript">
+                var countDownTime;
+                var minuteCount = 2;
+                var secondCount = 0;
+                var sessionTime = 10; //in minutes
+                var showAdditionalTimeDialogBefore = 10; //in second
+                ////////////////////////////////////////////////////////////////////////////////////
+                var isAdditionalTimeDialogShowed = false;
+                var whenToShowAdditionalTimeDialog;
+                var countDownStarted = false;
+                var minute;
+                var second;
+
+                function countDownInit() {
+                    countDownTime = (new Date()).getTime();
+                    minute = minuteCount;
+                    second = secondCount;
+                    countDownStarted = false;
+                    whenToShowAdditionalTimeDialog = (minuteCount * 60 + secondCount) * 1000;
+                    sessionTime = sessionTime * 60 * 1000 - showAdditionalTimeDialogBefore * 1000;
+                }
+
+                function checkCountDown() {
+                    var now = (new Date()).getTime();
+
+                    if (now - countDownTime > (sessionTime - whenToShowAdditionalTimeDialog)) {
+                        PF('additionalTimeDialog').show();
+                        countDownStarted = true;
+                    }
+
+                    if (countDownStarted) {
+                        second = second - 1;
+
+                        if (0 > second) {
+                            second = 59;
+                            minute = minute - 1;
+                        }
+
+                        if (0 > minute) {
+                            handLogout();
+                            return;
+                        }
+
+                        document.getElementById('minuteOutput').innerHTML = minute;
+                        document.getElementById('secondOutput').innerHTML = second;
+                    }
+                }
+
+                window.setInterval(checkCountDown, 1000);
+            </script>
+        </h:head>
+        <h:body onload="countDownInit()">
+            <p:growl id="growl" life="3000"/>
+            <p:growl id="grow_main_dt" showDetail="true" showSummary="false" sticky="true"/>
+            <p:growl id="grow_main" showDetail="false" sticky="false" />
+
+            <div id="wrapper">
+                <div id="profile_info">
+                    Tài khoản #{secuser.getUserLogged().userName} -
+                    <script>document.write($.datepicker.formatDate('dd/mm/yy', new Date()))</script> -
+                    <p:commandLink id="logout" onclick="PF('dlg_logout').show();"  styleClass="link-logout">Thoát</p:commandLink>
+                </div>
+                <div id="banner" >
+                    <a href="#{request.contextPath}/" class="left">
+                        <div id="logo" />
+                    </a>
+                    <div class="clear" />
+                </div>
+
+                <ui:insert name="menu" />
+
+                <div id="dashboard">
+                    <div style="margin: 0 40px;" >
+                        <p:breadCrumb id="breadcum" rendered="false">
+                            <p:menuitem value="Categories" url="/" />
+                            <p:menuitem value="#{empty main.moduleName ? 'HOME' : main.moduleName}" url="#" />
+                        </p:breadCrumb>
+                        <ui:insert name="center" />
+                    </div>
+                </div>
+
+                <ui:insert name="bottom"/>
+            </div>
+
+            <p:dialog modal="true" widgetVar="additionalTimeDialog" header="Cảnh báo" draggable="false" resizable="" closable="false">
+                Phiên làm việc còn
+                <h:outputText id="minuteOutput" />:<h:outputText id="secondOutput" />
+                . Bạn có muốn thêm thời gian ?
+                <br />
+                <br />
+
+                <center>
+                    <p:commandButton value="#{PP_SHARED.yes}" process="@this" styleClass="btn-green" update="@none" oncomplete="countDownInit(); PF('additionalTimeDialog').hide();" icon="ui-icon-circle-check" />
+                    <p:commandButton value="#{PP_SHARED.no}" process="@this" styleClass="btn-red btn-margin" actionListener="#{secuser.logout}" oncomplete="logout();" icon="ui-icon-circle-close" />
+                </center>
+            </p:dialog>
+
+            <p:confirmDialog id="dialog_logout" message="#{PP_SHARED.confirm_logout}" header="#{PP_SHARED.logout_dialog_header}" severity="alert" widgetVar="dlg_logout">
+                <p:commandButton actionListener="#{secuser.logout}" styleClass="btn-red" icon="ui-icon ui-icon-circle-check" process="@this" id="confirm_logout" value="#{PP_SHARED.yes}" oncomplete="logout();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-white btn-margin" id="decline_logout" value="#{PP_SHARED.no}" onclick="PF('dlg_logout').hide()" />
+            </p:confirmDialog>
+            <h:form>
+                <p:remoteCommand global="false" name="handLogout" actionListener="#{secuser.logout}" oncomplete="logout();" />
+            </h:form>
+
+            <p:ajaxStatus onstart="countDownInit(); PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+            <p:dialog id="status_dialog" modal="true" widgetVar="statusDialog" draggable="false" closable="false" resizable="false" >
+                <p:graphicImage value="/resources/images/primefaces/gif-load.gif" />
+            </p:dialog>
+        </h:body>
+    </f:view>
+</html>

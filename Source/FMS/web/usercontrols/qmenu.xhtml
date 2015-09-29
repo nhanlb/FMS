@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" >
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css">
+                #quick-menu .ui-menu {
+                    background: transparent;
+                    border: 0;
+                }
+                
+                #quick-menu .ui-menu-list .ui-widget-header {
+                    border: 0;
+                    margin: 0;
+                    width: 100%;
+                }
+                
+                #quick-menu .ui-menu-list .ui-widget-header h3 {
+                    padding: 5px 7px;
+                    font-size: 15px;
+                }           
+                
+                #quick-menu .ui-menu-list .ui-menuitem {
+                    margin: 0;
+                    border-bottom: 1px solid #d1d1d1 !important;
+                }
+                
+                #quick-menu .ui-menu .ui-menuitem-link {
+                    width: 97%;
+                }
+            </style>
+            
+            <h:form id="form_qmenu">
+                <p:menu model="#{func_menu.qmenuBar}" />
+            </h:form>
+        </ui:composition>
+    </h:body>
+</html>

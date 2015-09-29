@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css" >
+                .ui-tree-container {
+                    height: 350px !important;
+                }
+            </style>
+
+            <p:tabView id="tabpp" dynamic="true">
+                <p:ajax global="false" event="tabChange" process="@none" immediate="true"/>
+                <p:tab title="#{PP_FILEPP.language}">
+                    <div style="width: 25%" class="left" >
+                        <p:panel header="#{PP_FILEPP.headerleft}" >
+                            <p:tree selectionMode="single" value="#{filepp.dtnRoot}" var="node" id="tree" animate="true" style="overflow: auto;">  
+
+                                <p:ajax global="false" event="select" listener="#{filepp.onNodeSelect}" update=":form_main:tabpp:dtentry :form_main:tabpp:err :form_main:tabpp:btnsave"/>
+
+                                <p:treeNode icon="#{node.objType eq 'G'?'ui-icon-folder-collapsed':'ui-icon-link'}" id="treeNode">  
+                                    <h:outputText value="#{node.name}" id="lblNode"/>  
+                                </p:treeNode>  
+                            </p:tree> 
+                        </p:panel>
+                    </div>
+
+                    <div style="width: calc(75% - 10px); margin-left: 10px;" class="left" >
+                        <p:panel header="#{PP_FILEPP.content}"  >
+                            <h:outputText id="err" value="#{filepp.strError}" style="color:red !important;"/>
+                            <p:dataTable id="dtentry" value="#{filepp.listEntry}" var="entry" editable="true" rowsPerPageTemplate="5,10,15" 
+                                         paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                         disabledSelection="false" paginatorPosition="bottom" >
+
+                                <p:ajax global="false" event="rowEdit" listener="#{filepp.onEdit}" />
+
+                                <p:column filterBy="#{entry.strKey}" headerText="#{PP_FILEPP.key}" sortBy="#{entry.strKey}">                                            
+                                    <h:outputText value="#{entry.strKey}" />  
+                                </p:column>
+                                <p:column filterBy="#{entry.strValue}" headerText="#{PP_FILEPP.value}" sortBy="#{entry.strValue}">
+                                    <p:cellEditor>  
+                                        <f:facet name="output">  
+                                            <h:outputText value="#{entry.strValue}" />  
+                                        </f:facet>  
+                                        <f:facet name="input">  
+                                            <p:inputText value="#{entry.strValue}" style="width:100%"/>  
+                                        </f:facet>  
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column rendered="#{filepp.blIsEdit}" headerText="#{PP_FILEPP.option}" style="width:50px">  
+                                    <p:rowEditor />  
+                                </p:column> 
+                                <f:facet name="footer">  
+                                    <h:outputText value="#{PP_FILEPP.total}">
+                                    </h:outputText> : #{filepp.listEntry.size()}
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                        <div align="center" style="padding-top:8px;">
+                            <p:commandButton icon="ui-icon-disk" rendered="#{filepp.blIsEdit}" id="btnsave" disabled="#{!filepp.mblSave}" value="Save" actionListener="#{filepp.handSave()}" update=":grow_main_dt"></p:commandButton>
+                        </div>
+                    </div>
+
+                    <div class="clear" />
+                </p:tab>
+
+                <p:tab title="#{PP_FILEPP.config}">
+                    <div style="width: 25%" class="left" >
+                        <p:panel header="#{PP_FILEPP.config_left}" >
+                            <p:treeTable value="#{filepp.dtnRootRight}" var="rright" selectionMode="single" selection="#{filepp.selectTreeNodeTab2}" 
+                                         styleClass="hide-column-names" >
+                                <p:ajax global="false" process="@this" update=":form_main:tabpp:dtright :form_main:tabpp:btnsaveright" event="select" listener="#{filepp.onTab2NodeSelect}"/>
+                                <p:column  style="width:150px" >  
+                                    <h:outputText value="#{rright}" />  
+                                </p:column>  
+                            </p:treeTable>
+                        </p:panel>
+                    </div>
+
+                    <div style="width: calc(75% - 10px); margin-left: 10px;" class="left" >
+                        <p:panel header="#{PP_FILEPP.config_right}"  >
+                            <p:dataTable editable="true" id="dtright" value="#{filepp.listTab2Entry}" var="lright"
+                                         paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                         rowsPerPageTemplate="5,10,15">
+                                <p:column filterBy="#{lright.strKey}" headerText="#{PP_FILEPP.key}" sortBy="#{lright.strKey}">
+                                    #{lright.strKey}
+                                </p:column>
+                                <p:column filterBy="#{lright.strValue}" headerText="#{PP_FILEPP.value}" sortBy="#{lright.strValue}">
+                                    <p:cellEditor>  
+                                        <f:facet name="output">  
+                                            <h:outputText value="#{lright.strValue}" />  
+                                        </f:facet>  
+                                        <f:facet name="input">  
+                                            <p:inputText value="#{lright.strValue}" style="width:100%"/>  
+                                        </f:facet>  
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column rendered="#{filepp.blIsEdit}" headerText="#{PP_FILEPP.option}" style="width:50px">  
+                                    <p:rowEditor />  
+                                </p:column> 
+                                <f:facet name="footer">  
+                                    <h:outputText value="#{PP_FILEPP.total}">
+                                    </h:outputText> : #{filepp.listTab2Entry.size()}
+                                </f:facet>
+                            </p:dataTable>
+                        </p:panel>
+                        <div align="center" style="padding-top:8px">
+                            <p:commandButton icon="ui-icon-disk"  rendered="#{filepp.blIsEdit}" process="@this" id="btnsaveright" disabled="#{!filepp.mblSaveright}" value="Save" actionListener="#{filepp.handSaveTab2()}" update=":grow_main_dt"></p:commandButton>
+                        </div>
+                    </div>
+
+                    <div class="clear" />
+                </p:tab>
+            </p:tabView>
+        </ui:composition>
+    </h:body>
+</html>

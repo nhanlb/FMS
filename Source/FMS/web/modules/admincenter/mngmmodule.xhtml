@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      >
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css">
+                .ddsg-wrapper li {
+                    background: none;
+                }
+
+                #form_main\:tree_module {
+                    border: 0;
+                    background: transparent;
+                }
+
+                #table_module_right {
+                    border-left: 1px solid #EEE;
+                    border-bottom: 1px solid #EEE;
+                }
+
+                #table_module_right td, #table_module_right th {
+                    text-align: center;
+                    padding: 5px 10px;
+                    border-top: 1px solid #EEE;
+                    border-right: 1px solid #EEE;
+                }
+
+                #table_module_right td div {
+                    text-align: left;
+                }
+
+                #sidebar .ui-widget-content {
+                    border-color: #EEE !important;
+                }
+
+                .pnl td {
+                    text-align: left;
+                }
+
+                #table_module_right td div {
+                    text-align: center !important;
+                }
+
+                .ui-tree-container {
+                    max-height: 400px;
+                }
+
+                .ui-autocomplete .ui-inputfield {
+                    width: 100%;
+                }
+            </style>
+
+            <script type="text/javascript">
+                //<![CDATA[
+                $(document).ready(function() {
+
+                });
+
+                function handleSubmitRequest(xhr, status, args) {
+                    if (args.isM) {
+                        confirmDialog2.show();
+                    }
+                    else if (args.isDisable) {
+                        confirmDialog3.show();
+                    }
+                }
+                //]]>
+            </script>
+
+            <p:outputPanel id="panel_center" >
+                <div class="left" style="width: 25%;" >
+                    <p:panel header="#{PP_MNGMODULE.module}" styleClass="pnl-blue" >
+                        <p:panelGrid style="width: 100%" columns="2" >
+                            <p:outputLabel for="module_search" value="#{PP_SHARED.search}" />
+                            <p:autoComplete id="module_search" disabled="#{func_systemmodule.isDisplayBtnConfirm}" minQueryLength="1" maxResults="10" queryDelay="500" value="#{func_systemmodule.mstrModuleSearch}" completeMethod="#{func_systemmodule.completeModuleSearch}" onfocus="this.select();" onmouseup="return false;" style="width: 100%;" >
+                                <p:ajax event="itemSelect" listener="#{func_systemmodule.onModuleSearchSelect}" process="@this, module_search" update="panel_center" />
+                            </p:autoComplete>
+                        </p:panelGrid>
+                        <p:watermark for="module_search" value="#{PP_MNGMODULE.type_keyword}" />
+                        <hr />
+
+                        <p:blockUI block="tree_module" widgetVar="blockUITree" />
+                        <p:tree id="tree_module" value="#{func_systemmodule.mtreeModule}" var="nodeModule" animate="true" widgetVar="treeModule" style="overflow: auto"
+                                selection="#{func_systemmodule.mselectedModuleNode}" selectionMode="single" >
+
+                            <p:ajax global="false" event="select" listener="#{func_systemmodule.onNodeSelect}"
+                                    update=":form_main:table_module_detail :form_main:pnl_control :form_main:table_module_right :form_main:table_apps" />
+
+                            <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed" >
+                                <h:outputText value="#{nodeModule.name}" />
+                            </p:treeNode>
+                            <p:treeNode type="m" icon="ui-icon-stop" >
+                                <h:outputText value="#{nodeModule.name}" />
+                            </p:treeNode>
+                            <p:treeNode type="h" icon="ui-icon-stop" >
+                                <h:outputText value="#{nodeModule.name}" />
+                            </p:treeNode>
+                        </p:tree>
+                    </p:panel>
+                </div>
+
+                <div id="module-detail" class="right" style="min-height: 371px; width: calc(75% - 10px); margin-left: 10px;">
+                    <p:panel header="#{PP_MNGMODULE.module_detail}" styleClass="pnl-red" >
+                        <p:focus context="table_module_detail" />
+
+                        <h:panelGrid style="width: 100%" columns="4" id="table_module_detail" columnClasses="w15,w35,w15,w35">
+                            <p:outputLabel for="module_name" value="#{PP_MNGMODULE.module_name}" >
+                            </p:outputLabel>
+                            <p:inputText maxlength="128" disabled="#{func_systemmodule.isDISABLE}" required="true" requiredMessage="#{PP_MNGMODULE.module_name_is_empty}" id="module_name" value="#{func_systemmodule.mtmpModule.name}" />
+
+                            <p:outputLabel styleClass="column-margin" for="module_parent" value="#{PP_MNGMODULE.parent_module}" />
+                            <p:selectOneMenu filter="true" filterMatchMode="contains" disabled="#{func_systemmodule.isDISABLE}" id="module_parent" value="#{func_systemmodule.mtmpModule.parentId}" effect="fade" >
+                                <f:selectItem itemLabel="" itemValue="0" />
+                                <f:selectItems value="#{func_systemmodule.mlistParentModule}" var="module" itemLabel="#{module.name}" itemValue="#{module.objectId}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="module_type" value="#{PP_MNGMODULE.module_type}" >
+                            </p:outputLabel>
+                            <p:selectOneMenu disabled="#{func_systemmodule.isDISABLE}" id="module_type" value="#{func_systemmodule.mtmpModule.objType}" >
+                                <f:selectItem itemLabel="#{PP_MNGMODULE.module}" itemValue="M" />
+                                <f:selectItem itemLabel="#{PP_MNGMODULE.group_module}" itemValue="G" />
+                                <f:selectItem itemLabel="#{PP_MNGMODULE.hyperlink}" itemValue="H" />
+                            </p:selectOneMenu >
+
+                            <p:outputLabel styleClass="column-margin" for="module_path" value="#{PP_MNGMODULE.facelet_url}" >
+                            </p:outputLabel>
+                            <p:inputText  maxlength="512" disabled="#{func_systemmodule.isDISABLE}" required="true" requiredMessage="#{PP_MNGMODULE.facelet_url_is_empty}" id="module_path" value="#{func_systemmodule.mtmpModule.path}" />
+
+                            <p:outputLabel for="module_ord" value="#{PP_MNGMODULE.order}" />
+                            <p:inputText disabled="#{func_systemmodule.isDISABLE}" id="module_ord" value="#{func_systemmodule.mtmpModule.order}" maxlength="5"  >
+                                <pe:keyFilter regEx="/[\d\-]/" />
+                            </p:inputText>
+
+                            <p:outputLabel styleClass="column-margin" for="module_status" value="#{PP_SHARED.status}" />
+                            <p:selectOneMenu disabled="#{func_systemmodule.isDISABLE}" id="module_status" value="#{func_systemmodule.mtmpModule.status}" >
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                            </p:selectOneMenu >
+
+                            <p:outputLabel for="description" value="#{PP_MNGMODULE.is_show_menu}" />
+                            <p:selectOneMenu disabled="#{func_systemmodule.isDISABLE}" id="description" value="#{func_systemmodule.mtmpModule.description}" >
+                                <f:selectItem itemLabel="#{PP_SHARED.yes}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.no}" itemValue="0" />
+                            </p:selectOneMenu >
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:outputPanel id="pnl_control">
+                        <div id="box_control" class="pnl" style="margin: 10px auto;">
+                            <p:outputPanel rendered="#{not func_systemmodule.isDisplayBtnConfirm}">
+                                <script type="text/javascript">
+                try {
+                    PF('blockUITree').hide();
+                } catch (e) {
+                }
+                                </script>
+
+                                <p:commandButton id="btn_add" actionListener="#{func_systemmodule.changeStateAdd()}" onclick="PF('blockUITree').show();" rendered="#{func_systemmodule.getPermission('I')}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" actionListener="#{func_systemmodule.changeStateCopy()}" rendered="#{func_systemmodule.getPermission('I')}" disabled="#{not func_systemmodule.isSelectedModule}" process="@form" styleClass="btn-green btn-margin" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" actionListener="#{func_systemmodule.changeStateEdit()}" rendered="#{func_systemmodule.getPermission('U')}" disabled="#{not func_systemmodule.isSelectedModule}" process="@form" styleClass="btn-cyan btn-margin" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" actionListener="#{func_systemmodule.changeStateDel()}" rendered="#{func_systemmodule.getPermission('D')}" disabled="#{not func_systemmodule.isSelectedModule}" process="@form" styleClass="btn-red btn-margin" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{func_systemmodule.isDisplayBtnConfirm}">
+                                <script type="text/javascript">
+                try {
+                    PF('blockUITree').show();
+                } catch (e) {
+                }
+                                </script>
+
+                                <p:commandButton id="btn_ok" actionListener="#{func_systemmodule.handOK()}" process="@this :form_main:table_module_detail :form_main:table_module_right :form_main:table_apps" styleClass="btn-green btn-margin" value="#{PP_SHARED.ok}" update="panel_center, panel_dialog :grow_main_dt" onstart="fixShadow();" oncomplete="handleSubmitRequest(xhr, status, args);" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{func_systemmodule.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center, panel_dialog" icon="ui-icon-circle-arrow-w" onstart="fixShadow();" >
+                                    <p:resetInput target="table_module_detail, table_module_right" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </div>
+                    </p:outputPanel>
+
+                    <p:panel header="#{PP_MNGMODULE.module_access_right}" styleClass="pnl-green" >
+                        <p:dataTable value="#{func_systemmodule.mtmpModule.listAccessRight}" var="accessRight"
+                                     id="table_module_right" widgetVar="tableModuleRight" rowIndexVar="index" style="width: 100%; margin-bottom: 10px">
+                            <p:column headerText="#{PP_MNGMODULE.right}">
+                                #{accessRight.name}
+                            </p:column>
+                            <p:column headerText="#{PP_MNGMODULE.access_default}">
+                                <p:selectOneMenu id="accessRightD" disabled="#{func_systemmodule.isDISABLE}" style="width: 80%;" value="#{func_systemmodule.mtmpModule.listAccessRight.get(index).access}" >
+                                    <f:selectItem itemLabel="#{PP_SHARED.allow}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{PP_SHARED.deny}" itemValue="0" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column headerText="#{PP_SHARED.active}">
+                                <p:selectBooleanCheckbox id="activeRightD" disabled="#{func_systemmodule.isDISABLE}" value="#{func_systemmodule.mtmpModule.listAccessRight.get(index).active}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:panel header="#{PP_MNGMODULE.module_app}" styleClass="pnl-cyan" >
+                        <p:dataTable value="#{func_systemmodule.mlistApp}" id="table_apps" widgetVar="tableApps" var="app" selection="#{func_systemmodule.mselectedApp}"
+                                     rowKey="#{app.appId}" disabledSelection="#{not func_systemmodule.isDisplayBtnConfirm}" >
+
+                            <p:ajax global="false" event="rowSelectRadio" process="@this" listener="#{func_systemmodule.onSelectedApp}" update=":form_main:module_parent" />
+
+                            <p:column disabledSelection="#{func_systemmodule.isDISABLE}" selectionMode="single" style="width:15px" />
+
+                            <p:column headerText="#{PP_MNGAPP.app_name}" >
+                                #{app.name}
+                            </p:column>
+                            <p:column headerText="#{PP_MNGAPP.app_code}" >
+                                #{app.code}
+                            </p:column>
+                            <p:column headerText="#{PP_MNGAPP.app_status}" >
+                                <p:selectBooleanCheckbox value="#{app.status eq '1' ? true : false}" disabled="true" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                </div><!-- end #dashboard -->
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:outputPanel id="panel_dialog" >
+                <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog" >
+                    <p:commandButton icon="ui-icon-circle-check" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{func_systemmodule.handDelete}" oncomplete="PF('confirmDialog').hide(); " />
+                    <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog styleClass="shadowfix" id="confirmDialog2" message="#{PP_MNGMODULE.parent_module_change_to_group_module}" header="#{PP_MNGMODULE.confirm_change}" severity="alert" widgetVar="confirmDialog2">
+                    <p:commandButton icon="ui-icon-circle-check" process="@this" id="confirm2" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{func_systemmodule.changeModuleType}" oncomplete="PF('confirmDialog2').hide(); " />
+                    <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline2" value="#{PP_SHARED.no}" onclick="PF('confirmDialog2').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog styleClass="shadowfix" id="confirmDialog3" message="#{PP_MNGMODULE.locked_module_not_display_on_menu}" header="#{PP_MNGMODULE.confirm_change}" severity="alert" widgetVar="confirmDialog3">
+                    <p:commandButton icon="ui-icon-circle-check" process="@this" id="confirm3" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{func_systemmodule.confirmDisableModule()}" oncomplete="PF('confirmDialog2').hide(); " />
+                    <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline3" value="#{PP_SHARED.no}" onclick="PF('confirmDialog2').hide()" />
+                </p:confirmDialog>
+            </p:outputPanel>
+
+        </ui:composition>
+    </h:body>
+</html>

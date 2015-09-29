@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_SCALESMNG.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel header="#{PP_SCALESMNG.scalesInfo}" style=" margin-bottom: 10px;" >
+                        <p:panelGrid id="panel_scales" style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+                            <p:outputLabel for="scalesCode" value="#{PP_SCALESMNG.scalesCode}" />
+                            <p:inputText maxlength="10" id="scalesCode"
+                                         value="#{scalesController.scales.scalesCode}"
+                                         disabled="#{scalesController.isDISABLE}"
+                                         required="true"
+                                         requiredMessage="#{PP_SCALESMNG.msg_req_scalesCode}"/>
+                            <p:outputLabel for="scalesName" value="#{PP_SCALESMNG.scalesName}" />
+                            <p:inputText maxlength="100" id="scalesName"
+                                         value="#{scalesController.scales.scalesName}"
+                                         disabled="#{scalesController.isDISABLE}"
+                                         required="true"
+                                         requiredMessage="#{PP_SCALESMNG.msg_req_scalesName}"/>
+                            <p:outputLabel for="scalesCate" value="#{PP_SCALESMNG.scalesCate}" />
+                            <p:selectOneMenu id="scalesCate" value="#{scalesController.scales.scalesCate}" disabled="#{scalesController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_SCALESMNG.msg_req_scalesCate}" >
+                                <f:selectItem itemLabel="#{PP_SCALESMNG.scalesCateChoice}"/>
+                                <f:selectItems value="#{scalesController.lstScalesCate}" var="item"
+                                               itemValue="#{item.code}" itemLabel="#{item.value}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="snnb" value="#{PP_SCALESMNG.snnb}" />
+                            <p:inputText maxlength="10" id="snnb" 
+                                         value="#{scalesController.scales.snnb}" 
+                                         disabled="#{scalesController.isDISABLE}"
+                                         required="true" 
+                                         requiredMessage="#{PP_SCALESMNG.msg_req_snnb}">
+                                <pe:keyFilter regEx="/[0-9.]/i" />
+                            </p:inputText>
+                            <p:outputLabel for="status" value="#{PP_SCALESMNG.status}" />
+                            <p:selectOneMenu id="status" value="#{scalesController.scales.status}"
+                                             disabled="#{scalesController.isDISABLE}" required="true"
+                                             requiredMessage="#{PP_SCALESMNG.msg_req_status}" >
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                            </p:selectOneMenu>
+
+                            <p:focus context=":form_main:panel_scales" />
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not scalesController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_add" rendered="#{scalesController.getPermission('I')}" actionListener="#{scalesController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tableApp').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{scalesController.getPermission('I')}" actionListener="#{scalesController.changeStateCopy()}" disabled="#{not scalesController.isSelectedApp}" process="@this" onclick="PF('tableApp').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{scalesController.getPermission('U')}"
+                                                 actionListener="#{scalesController.changeStateEdit()}"
+                                                 disabled="#{not scalesController.isSelectedApp}" process="@this"
+                                                 styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}"
+                                                 update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{scalesController.getPermission('D')}" actionListener="#{scalesController.changeStateDel()}" disabled="#{not scalesController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{scalesController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_ok" actionListener="#{scalesController.handOK()}"
+                                                 process="@this :form_main:panel_scales"
+                                                 styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}"
+                                                 update="panel_center :grow_main_dt"
+                                                 icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{scalesController.handCancel()}"
+                                                 process="@this" styleClass="btn-margin back"
+                                                 value="#{PP_SHARED.back}" update="panel_center"
+                                                 icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_scales" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_SCALESMNG.scales_list}" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_scales" widgetVar="tableApp" value="#{scalesController.lstScales}" var="scales"
+                                     filteredValue="#{scalesController.lstScalesFiltered}"
+                                     rowIndexVar="stt"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{scalesController.isDisplayBtnConfirm}" selectionMode="single" rowKey="#{scales.scalesId}" selection="#{scalesController.mselectedScales}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{scalesController.lstScales.size()}" paginator="true" rows="10" >
+
+                            <p:ajax global="false" event="rowSelect" listener="#{scalesController.onRowSelect}" update=":form_main:panel_scales" />
+                            <p:ajax global="false" event="rowUnselect" listener="#{scalesController.onRowSelect}" update=":form_main:panel_scales"  />
+                            <p:ajax global="false" event="sort" />
+                            <p:ajax global="false" event="page" />
+                            <p:ajax global="false" event="filter" />
+
+                            <p:column headerText="Stt">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_SCALESMNG.scalesCode}" filterBy="#{scales.scalesCode}" filterMatchMode="contains" >
+                                <h:outputText value="#{scales.scalesCode}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SCALESMNG.scalesName}" filterBy="#{scales.scalesName}" filterMatchMode="contains" >
+                                <h:outputText value="#{scales.scalesName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SCALESMNG.scalesCate}" sortBy="#{scales.scalesCate}" filterMatchMode="contains" >
+                                <ui:repeat value="#{scalesController.lstScalesCate }" var="item">
+                                    <h:outputText value="#{item.value}" rendered="#{scales.scalesCate == item.code}"/>
+                                </ui:repeat>
+                            </p:column>
+                            <p:column headerText="#{PP_SCALESMNG.snnb}" filterBy="#{scales.snnb}" filterMatchMode="contains" >
+                                <h:outputText value="#{scales.snnb}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_SCALESMNG.status}" style="vertical-align: top">
+                                <h:outputText styleClass="lbl-green" rendered="#{scales.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{scales.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{scalesController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tableApp').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

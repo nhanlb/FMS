@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_POLICYOBJECTMNG.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel header="#{PP_POLICYOBJECTMNG.policyInfo}" style=" margin-bottom: 10px;" >
+                        <p:panelGrid id="panel_policies" style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+                            <p:outputLabel for="policyName" value="#{PP_POLICYOBJECTMNG.policyName}" />
+                            <p:inputText maxlength="200" id="policyName"
+                                         value="#{policyObjectController.policy.policyObjectName}"
+                                         disabled="#{policyObjectController.isDISABLE}"
+                                         required="true"
+                                         requiredMessage="#{PP_POLICYOBJECTMNG.msg_req_policyName}"/>
+                            <p:outputLabel for="policyGroup" value="#{PP_POLICYOBJECTMNG.policyGroup}" />
+                            <p:selectOneMenu id="policyGroup" value="#{policyObjectController.policy.policyObjectGroup}" 
+                                             disabled="#{policyObjectController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_POLICYOBJECTMNG.msg_req_policyGroup}" >
+                                <f:selectItem itemValue="" itemLabel="" />
+                                <f:selectItems value="#{policyObjectController.lstPolicyObjectGroup}" var="item"
+                                               itemValue="#{item.code}" itemLabel="#{item.value}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="description" value="#{PP_POLICYOBJECTMNG.description}" />
+                            <p:inputText maxlength="100" id="description"
+                                         value="#{policyObjectController.policy.description}"
+                                         disabled="#{policyObjectController.isDISABLE}"
+                                         required="true"
+                                         requiredMessage="#{PP_POLICYOBJECTMNG.msg_req_description}"/>
+                            <p:outputLabel for="status" value="#{PP_POLICYOBJECTMNG.status}" />
+                            <p:selectOneMenu id="status" value="#{policyObjectController.policy.status}"
+                                             disabled="#{policyObjectController.isDISABLE}" required="true"
+                                             requiredMessage="#{PP_POLICYOBJECTMNG.msg_req_status}" >
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                            </p:selectOneMenu>
+
+                            <p:focus context=":form_main:panel_policies" />
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not policyObjectController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_add" rendered="#{policyObjectController.getPermission('I')}"
+                                                 actionListener="#{policyObjectController.changeStateAdd()}" 
+                                                 process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}"
+                                                 onclick="PF('tableApp').clearFilters();" update="panel_center" 
+                                                 icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{policyObjectController.getPermission('I')}"
+                                                 actionListener="#{policyObjectController.changeStateCopy()}" 
+                                                 disabled="#{not policyObjectController.isSelectedApp}" 
+                                                 process="@this" onclick="PF('tableApp').clearFilters();" 
+                                                 styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" 
+                                                 update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{policyObjectController.getPermission('U')}"
+                                                 actionListener="#{policyObjectController.changeStateEdit()}"
+                                                 disabled="#{not policyObjectController.isSelectedApp}" process="@this"
+                                                 styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}"
+                                                 update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{policyObjectController.getPermission('D')}" 
+                                                 actionListener="#{policyObjectController.changeStateDel()}" 
+                                                 disabled="#{not policyObjectController.isSelectedApp}"
+                                                 process="@this" styleClass="btn-margin btn-red" 
+                                                 value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()"
+                                                 icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{policyObjectController.isDisplayBtnConfirm}">
+                                <p:commandButton id="btn_ok" actionListener="#{policyObjectController.handOK()}"
+                                                 process="@this :form_main:panel_policies"
+                                                 styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}"
+                                                 update="panel_center :grow_main_dt"
+                                                 icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{policyObjectController.handCancel()}"
+                                                 process="@this" styleClass="btn-margin back"
+                                                 value="#{PP_SHARED.back}" update="panel_center"
+                                                 icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_policies" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_POLICYOBJECTMNG.policy_list}" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_policies"
+                                     widgetVar="tableApp" value="#{policyObjectController.lstPolicies}" 
+                                     rowIndexVar="stt"
+                                     var="policies"
+                                     filteredValue="#{policyObjectController.lstPolicyFiltered}"
+                                     emptyMessage="#{PP_SHARED.empty_message}"
+                                     disabledSelection="#{policyObjectController.isDisplayBtnConfirm}"
+                                     selectionMode="single" rowKey="#{policies.policyObjectID}"
+                                     selection="#{policyObjectController.mselectedPolicy}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,#{policyObjectController.lstPolicies.size()}" paginator="true" rows="10" >
+
+                            <p:ajax global="false" event="rowSelect" listener="#{policyObjectController.onRowSelect}" update=":form_main:panel_policies" />
+                            <p:ajax global="false" event="rowUnselect" listener="#{policyObjectController.onRowSelect}" update=":form_main:panel_policies"  />
+                            <p:ajax global="false" event="sort" />
+                            <p:ajax global="false" event="page" />
+                            <p:ajax global="false" event="filter" />
+
+                            <p:column headerText="Stt">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_POLICYOBJECTMNG.policyName}" filterBy="#{policies.policyObjectName}" filterMatchMode="contains" >
+                                <h:outputText value="#{policies.policyObjectName}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_POLICYOBJECTMNG.policyGroup}" filterBy="#{policies.policyObjectGroup}" filterMatchMode="exact" width="150">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tableApp').filter();" style="float: left !important;">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItems value="#{policyObjectController.lstPolicyObjectGroup}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <ui:repeat value="#{policyObjectController.lstPolicyObjectGroup }" var="item">
+                                    <h:outputText value="#{item.value}" rendered="#{policies.policyObjectGroup == item.code}"/>
+                                </ui:repeat>
+                            </p:column>
+                            <p:column headerText="#{PP_POLICYOBJECTMNG.description}" filterBy="#{policies.description}" filterMatchMode="contains" >
+                                <h:outputText value="#{policies.description}"/>
+                            </p:column>
+                            <p:column headerText="#{PP_POLICYOBJECTMNG.status}" style="vertical-align: top">
+                                <h:outputText styleClass="lbl-green" rendered="#{policies.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{policies.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{policyObjectController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tableApp').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

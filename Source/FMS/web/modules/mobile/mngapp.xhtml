@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:pm="http://primefaces.org/mobile"
+      >
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>     
+            <pm:page id="page_main">
+                <h:form id="form_main">
+                    <pm:header title="#{main.moduleName eq null ? 'Trang chủ' : main.moduleName}" >
+                        <p:commandButton id="btn_menu" value="MENU" styleClass="ui-btn-left" type="button" icon="ui-icon-bullets" />
+                    </pm:header>
+
+                    <pm:content style="padding: 0;">                        
+                        <p:overlayPanel id="panel_menu" for="btn_menu" widgetVar="pnlMenu" at="left" showEffect="overlay">
+                            <p:menu model="#{func_menu.mobileMenu}" />
+                        </p:overlayPanel>
+                        <!--//////////////////////Main page/////////////////////-->
+                        <p:dataList rendered="#{not func_test.isDisplayBtnConfirm}" id="table_app" widgetVar="tableApp" value="#{func_test.mlistApp}" var="app" >   
+                            <p:commandLink actionListener="#{func_test.changeStateEdit(app)}" process="@this" update=":page_add" oncomplete="outcome('page_add')">
+                                <h2>#{app.name}</h2>
+                                <p>#{app.code}</p>
+                                <p class="ui-li-aside">
+                                    <strong>
+                                        <h:outputText rendered="#{app.status ne '1'}" value="#{PP_SHARED.disable}" />
+                                        <h:outputText rendered="#{app.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                    </strong>
+                                </p>
+                            </p:commandLink>                                
+                        </p:dataList>
+                        <!--/////////////////////////////////////////////////-->
+                        <pm:footer style="text-align: center;">
+                            <p:commandButton id="btn_add" actionListener="#{func_test.changeStateAdd()}" value="#{PP_SHARED.add}" process="@this" update=":page_add" oncomplete="outcome('page_add')" styleClass="ui-btn-icon-top" icon="ui-icon-plus" />                        
+                        </pm:footer>
+                    </pm:content> 
+                </h:form>
+            </pm:page>
+
+            <pm:page id="page_add" >
+                <h:form id='form_add'>
+                    <pm:header title="#{PP_MNGAPP.app_info}" >
+                        <p:commandButton id="btn_cancel" actionListener="#{func_test.handCancel()}" process="@this" update=":page_main" oncomplete="outcome('page_main', true)" style="width: auto; float: left;" value="#{PP_SHARED.back}" icon="ui-icon-carat-l" />
+                        <p:commandButton id="btn_ok" actionListener="#{func_test.handOK()}" process="@this :page_add:form_add:panel_add_app" value="#{PP_SHARED.ok}" style="float: right; width: auto;" update=":page_main, :page_add:form_add:panel_add_app, :grow_main_dt" icon="ui-icon-check" />
+                        <div style="clear: both;" />
+                    </pm:header>
+
+                    <pm:content>
+                        <p:outputPanel rendered="#{func_test.isDisplayBtnConfirm}" id="panel_add_app" style="width: 100%;" >
+                            <pm:field>
+                                <p:outputLabel for="app_name" value="#{PP_MNGAPP.app_name}" />
+                                <p:inputText maxlength="255" id="app_name" value="#{func_test.mtmpApp.name}" disabled="#{func_test.isDISABLE}" required="true" requiredMessage="#{PP_MNGAPP.app_name_cannot_empty}" />
+                            </pm:field>
+
+                            <pm:field>
+                                <p:outputLabel for="app_code" value="#{PP_MNGAPP.app_code}" />
+                                <p:inputText maxlength="50" id="app_code" value="#{func_test.mtmpApp.code}" validator="ValidatorAlphaNum" validatorMessage="#{PP_MNGAPP.app_code}#{PP_SHARED.is_not_valid}" disabled="#{func_test.isDISABLE}" required="true" requiredMessage="#{PP_MNGAPP.app_code_cannot_empty}" >
+                                    <pe:keyFilter regEx="/[a-z0-9_]/i" />
+                                </p:inputText>
+                            </pm:field>
+
+                            <pm:field>
+                                <p:outputLabel for="ord" value="#{PP_MNGAPP.app_ord}" />
+                                <p:inputText maxlength="5" id="ord" value="#{func_test.mtmpApp.ord}" disabled="#{func_test.isDISABLE}"  >
+                                    <pe:keyFilter regEx="/[0-9_]/i" />
+                                </p:inputText>
+                            </pm:field>
+
+                            <pm:field>
+                                <p:outputLabel for="app_status" value="#{PP_MNGAPP.app_status}" />
+                                <p:inputSwitch id="app_status" value="#{func_test.mtmpApp.bstatus}" disabled="#{func_test.isDISABLE}" >
+                                </p:inputSwitch>
+                            </pm:field>
+                        </p:outputPanel>
+                    </pm:content>
+                </h:form>
+            </pm:page>
+        </ui:composition>
+    </h:body>
+</html>

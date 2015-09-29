@@ -1,0 +1,105 @@
+/* 
+    Created on : Dec 19, 2014, 10:49:50 AM
+    Author     : ChienDX
+*/
+
+#vnp-logo {
+    width: calc(70% - 50px);
+    margin: auto;
+    text-align: center;
+}
+
+#vnp-logo img {
+    width: 100%;
+    max-height: 200px;
+    max-width: 400px;
+    content: url("../images/Vinaphone_Logo_2.png");
+}
+
+@media 
+(min-resolution: 300dpi) { 
+    #vnp-logo img {
+        content: url("../images/Vinaphone_Logo_large.png");
+    }
+}
+
+#page_login {
+    padding: 0px !important;
+    background: rgba(30,88,154,1);
+    background: -moz-linear-gradient(-45deg, rgba(30,88,154,1) 0%, rgba(41,137,216,1) 100%);
+    background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(30,88,154,1)), color-stop(100%, rgba(41,137,216,1)));
+    background: -webkit-linear-gradient(-45deg, rgba(30,88,154,1) 0%, rgba(41,137,216,1) 100%);
+    background: -o-linear-gradient(-45deg, rgba(30,88,154,1) 0%, rgba(41,137,216,1) 100%);
+    background: -ms-linear-gradient(-45deg, rgba(30,88,154,1) 0%, rgba(41,137,216,1) 100%);
+    background: linear-gradient(135deg, rgba(30,88,154,1) 0%, rgba(41,137,216,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e589a', endColorstr='#2989d8', GradientType=1 );
+}
+
+#page_login\:form_login\:pnl_input_login {
+    width: 70%; 
+    margin: 20px auto;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background: rgba(44, 44, 44, 0.1);
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#btn-login {
+    width: calc(70% - 20px);
+    margin: auto;                
+}
+
+#btn-login .ui-btn {
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9));
+    background: -moz-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: -webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: -o-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: -ms-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9',GradientType=0);
+    background-color: #f9f9f9;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #666666;
+    padding: 8px 24px;
+    text-shadow: 0px 1px 0px #ffffff;
+}
+
+#page_login\:form_login\:login_button {
+    border-color: #005F83;
+    background: #006D96;
+    color: #fff;
+    padding-left: 2em; 
+    width: 100% !important;
+}
+
+#page_login .ui-input-text {
+    background: #FFF !important;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+    -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.2);                
+}
+
+.ui-input-text > input {
+    padding-left: .4em !important;
+}
+
+#page-header {
+    margin: 20px 0;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 25px;
+}

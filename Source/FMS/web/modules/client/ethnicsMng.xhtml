@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_ETHNICS.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel id="panel_ethnic" header="#{PP_ETHNICS.ethnicInfo}" styleClass="pnl-red" style=" margin-bottom: 10px;" >
+                        <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                            <p:outputLabel for="name" value="#{PP_ETHNICS.ethnicName}" />
+                            <p:inputText id="name" value="#{ethnicsController.ethnics.ethnicName}" disabled="#{ethnicsController.isDISABLE}"
+                                         required="true" requiredMessage="#{PP_ETHNICS.msg_req_ethnicName}" maxlength="150">
+                            </p:inputText>
+                            
+                            <p:outputLabel for="code" value="#{PP_ETHNICS.description}" />
+                            <p:inputText id="code" value="#{ethnicsController.ethnics.description}" disabled="#{ethnicsController.isDISABLE}">
+                            </p:inputText>
+                            
+                            <p:outputLabel for="status" value="#{PP_ETHNICS.status}" />
+                            <p:selectOneMenu id="status" value="#{ethnicsController.ethnics.status}" disabled="#{ethnicsController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_ETHNICS.msg_req_status}">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:focus context=":form_main:panel_ethnic" />
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not ethnicsController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_add"/>
+                                <p:commandButton id="btn_add" rendered="#{ethnicsController.getPermission('I')}" actionListener="#{ethnicsController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tblEthnics').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{ethnicsController.getPermission('I')}" actionListener="#{ethnicsController.changeStateCopy()}" disabled="#{not ethnicsController.isSelectedApp}" process="@this" onclick="PF('tblEthnics').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{ethnicsController.getPermission('U')}" actionListener="#{ethnicsController.changeStateEdit()}" disabled="#{not ethnicsController.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{ethnicsController.getPermission('D')}" actionListener="#{ethnicsController.changeStateDel()}" disabled="#{not ethnicsController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{ethnicsController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_ok"/>
+                                <p:commandButton id="btn_ok" actionListener="#{ethnicsController.handOK()}" process="@this :form_main:panel_ethnic" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{ethnicsController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_ethnic" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_ETHNICS.ethnic_list}" styleClass="pnl-blue" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_ethnic" widgetVar="tblEthnics" value="#{ethnicsController.lstEthnics}" var="ethnic"
+                                     filteredValue="#{ethnicsController.lstEthnicsFiltered}"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{ethnicsController.isDisplayBtnConfirm}" selectionMode="single"
+                                     rowKey="#{ethnic.ethnicId}" selection="#{ethnicsController.mselectedEthnics}"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="(Bản ghi thứ: {startRecord} - {endRecord} trong {totalRecords}, Trang {currentPage}/{totalPages})"
+                                     rowsPerPageTemplate="5,10,15,#{ethnicsController.lstEthnics.size()}" paginator="true" rows="10" >
+
+                            <p:ajax event="rowSelect" process="@this" listener="#{ethnicsController.onRowSelect}" update=":form_main:panel_ethnic" />
+
+                            <p:column headerText="#{PP_ETHNICS.ethnicName}" sortBy="#{ethnic.ethnicName}" filterBy="#{ethnic.ethnicName}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{ethnic.ethnicName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_ETHNICS.description}" sortBy="#{ethnic.description}" filterBy="#{ethnic.description}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{ethnic.description}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_ETHNICS.status}" sortBy="#{ethnic.status}" filterBy="#{ethnic.status}"
+                                      filterMatchMode="exact" width="150" >
+                                <f:facet name="filter" >
+                                    <p:selectOneMenu onchange="PF('tblEthnics').filter();" style="float: left !important;">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText styleClass="lbl-green" rendered="#{ethnic.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{ethnic.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" appendTo=":form_main" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{ethnicsController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tblEthnics').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

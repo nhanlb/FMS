@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:panel id="panel_center">
+                <p:panel header="#{PP_MNGMODULE.module_detail}" styleClass="pnl-red" >
+                    <h:panelGrid style="width: 100%" columns="4" id="table_ss_detail" columnClasses="w15,w35,w15,w35">
+                        <p:outputLabel for="ss_code" value="#{PP_SALARYSCALE.ss_code}: "></p:outputLabel>
+                        <p:inputText id="ss_code" maxlength="10" required="true" requiredMessage="#{PP_SALARYSCALE.msg_ss_code_is_empty}"/>
+                        <p:outputLabel styleClass="column-margin" for="ss_cate" value="#{PP_SALARYSCALE.ss_cate}: " />
+                        <p:selectOneMenu id="ss_cate" filter="true" filterMatchMode="contains" effect="fade" required="true" >
+                            <f:selectItem itemLabel="" itemValue="0" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <h:panelGrid style="width: 100%" columns="2" columnClasses="w15,w85">
+                        <p:outputLabel for="ss_note" value="#{PP_SALARYSCALE.ss_note}: "></p:outputLabel>
+                        <p:inputText id="ss_note" maxlength="100"/>
+                    </h:panelGrid>
+                </p:panel>
+                <p:outputPanel id="pnl_control" >
+                    <div id="button" class="pnl" style="margin: 10px auto;">
+                        <p:outputPanel rendered="#{apParamBean.isDISABLE}">
+                            <p:commandButton id="btn_add" styleClass="btn-margin" value="#{PP_SHARED.add}" rendered="#{apParamBean.getPermission('I')}" actionListener="#{apParamBean.changeStateAdd()}"
+                                             update=":form_main:panel_center" icon="ui-icon-document" style="width:95px;"/>
+                            <p:commandButton id="btn_copy" styleClass="btn-margin" value="#{PP_SHARED.copy}" rendered="#{apParamBean.getPermission('I')}" actionListener="#{apParamBean.changeStateCopy()}"
+                                             update=":form_main:panel_center" icon="ui-icon-copy" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                            <p:commandButton id="btn_edit" styleClass="btn-margin" value="#{PP_SHARED.edit}" rendered="#{apParamBean.getPermission('U')}" actionListener="#{apParamBean.changeStateEdit()}"
+                                             update=":form_main:panel_center" icon="ui-icon-pencil" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                            <p:commandButton id="btn_del" styleClass="btn-margin" value="#{PP_SHARED.del}" rendered="#{apParamBean.getPermission('D')}"
+                                             oncomplete="confirmDialog.show()" icon="ui-icon-trash" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                            <p:commandButton id="btn_search" styleClass="btn-margin" value="#{PP_SHARED.search}" rendered="#{apParamBean.getPermission('S')}"
+                                             update=":form_main:panel_center" actionListener="#{apParamBean.changeStateSearch}" icon="ui-icon-search"
+                                             disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                        </p:outputPanel>
+                        <p:outputPanel rendered="#{not apParamBean.isDISABLE}">
+                            <p:commandButton id="btn_ok" styleClass="btn-margin" value="#{PP_SHARED.ok}" update=":grow_main_dt,:form_main:panel_center, form_main:valueChange" icon="ui-icon-check"
+                                             action="#{apParamBean.handOK()}" style="width:95px;"/>
+                            <p:commandButton id="btn_cancel" styleClass="btn-margin" value="#{PP_SHARED.back}" update=":form_main:" icon="ui-icon-arrowreturnthick-1-s" onstart="fixShadow();"
+                                             action="#{apParamBean.handCancel()}"  onclick="bui.hide()" style="width:95px;"/>
+                        </p:outputPanel>
+                    </div>
+                </p:outputPanel>
+                <p:panel header="#{PP_SALARYSCALE.ss_list}" styleClass="pnl-green" >
+                    <p:dataTable id="table_ss" widgetVar="tableSs" var="ss" styleClass="tableBoder" emptyMessage="#{PP_SALARYSCALE.table_empty}">
+                        <p:column headerText="#{PP_SALARYSCALE.ss_code}" >
+                            #{ss.name}
+                        </p:column>
+                        <p:column headerText="#{PP_SALARYSCALE.ss_name}" >
+                            #{ss.code}
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </p:panel>
+        </ui:composition>
+    </h:body>
+</html>
+

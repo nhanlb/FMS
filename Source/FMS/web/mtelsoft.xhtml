@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pm="http://primefaces.org/mobile"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <f:view locale="#{main.locale}" renderKitId="PRIMEFACES_MOBILE" />
+    <h:head>
+        <title>TLS-ADMIN</title>
+        <link rel="Shortcut Icon" href="#{request.contextPath}/resources/images/favico.ico" type="image/x-icon" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/ts-mobile-ui.css" />
+        <link rel="stylesheet" type="text/css" href="#{request.contextPath}/resources/css/jquery.mobile.icons.min.css" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/mscript.js" />
+        <script type="text/javascript" src="#{request.contextPath}/resources/js/jquery.cookie.js" />
+
+        <script type="text/javascript">
+            //Logout function
+            var strContexPath = "#{request.contextPath}";
+
+            function logout() {
+                var strCasServer = "#{cas.getCasServer()}";
+                var strRootSite = $(location).attr('protocol') + "//" + $(location).attr('host');
+
+                if ("#{cas.getCasEnable()}" === "0") {
+                    location.href = strRootSite + strContexPath;
+
+                } else {
+                    location.href = strCasServer + '/logout?service=' + strCasServer + '/cas/login?TARGET=' + strRootSite + strContexPath;
+                }
+            }
+            
+            function confirmLogout(text) {
+                var r = confirm(text);
+
+                if (r == true) {
+                    handLogout();
+                }
+            }            
+        </script>
+    </h:head>
+
+    <h:body>
+        <p:growl id="growl" life="3000"/>
+        <p:growl id="grow_main_dt" showDetail="true" showSummary="false" sticky="false"/>
+        <p:growl id="grow_main" showDetail="false" sticky="false" />
+
+        <h:form>
+            <p:remoteCommand global="false" process="@this" name="changeLocale" actionListener="#{main.changeLocale()}" oncomplete="location.reload();" />
+            <p:remoteCommand global="false" name="handLogout" actionListener="#{secuser.logout}" process="@this" oncomplete="logout();" />
+        </h:form>
+
+        <ui:insert name="center" />
+    </h:body>
+</html>

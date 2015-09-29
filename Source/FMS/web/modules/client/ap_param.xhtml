@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:body>
+        <script type="text/javascript">
+            window.onbeforeunload = WindowCloseHanlder;
+            function WindowCloseHanlder()
+            {
+                var valueChange = document.getElementById('form_main:valueChange').value;
+                var messageCloseBrowser = document.getElementById('messageCloseBrowser').value;
+                if (valueChange == 'true') {
+                    return confirm(messageCloseBrowser);
+                }
+            }
+        </script>
+        <div id="module-name">
+            <h1>#{PP_MNGAPPARAM.module_name}</h1>
+        </div>
+        <div id="content-main">
+            <div id="content-center">
+                <p:outputPanel id="panel_center">
+                    <div id="dashboard" class="width98">
+                        <p:panel style="text-align: center;" id="pnlInputHeader">
+                            <p:focus for="#{apParamBean.strInputFocus}" rendered="#{apParamBean.blFocus}"/>
+                            <p:panelGrid style="width: 100%; text-align: left; border:0px solid;">
+                                <p:row>
+                                    <p:column style="width: 15%">
+                                        <h:outputLabel for="par_type" value="#{PP_MNGAPPARAM.type}">
+                                            <span class="require-input" style="#{apParamBean.blRequireInputLabel?'':'visibility: hidden;'}">(*)</span>
+                                        </h:outputLabel>
+                                    </p:column>
+                                    <p:column style="width: 35%">
+                                        <p:inputText id="par_type" style="text-transform: uppercase;" value="#{apParamBean.strParType}" disabled="#{apParamBean.blDisableParName}" maxlength="30">
+                                            <pe:keyFilter regEx="/[A-Za-z0-9_]/"/>
+                                            <p:ajax event="keyup"  update=":form_main:valueChange" listener="#{apParamBean.checkKeyupChangeValue()}"/>
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column style="width: 15%">
+                                        <h:outputLabel for="par_name" value="#{PP_MNGAPPARAM.name}" ><span class="require-input" style="#{apParamBean.blRequireInputLabel?'':'visibility: hidden;'}"> (*)</span></h:outputLabel>
+                                    </p:column>
+                                    <p:column style="width: 35%">
+                                        <p:inputText id ="par_name" value="#{apParamBean.strParName}" disabled="#{apParamBean.blDisableInput}" maxlength="50">
+                                            <p:ajax event="keyup" update=":form_main:valueChange" listener="#{apParamBean.checkKeyupChangeValue()}"/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel for="par_value" value="#{PP_MNGAPPARAM.value}" > <span class="require-input" style="#{apParamBean.blRequireInputLabel?'':'visibility: hidden;'}"> (*)</span> </h:outputLabel>
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:inputText id="par_value" value="#{apParamBean.strParValue}" disabled="#{apParamBean.blDisableParName}" maxlength="150">
+                                            <p:ajax event="keyup" update=":form_main:valueChange" listener="#{apParamBean.checkKeyupChangeValue()}"/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel for="description" value="#{PP_MNGAPPARAM.description}"/>
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:inputTextarea id="description" value="#{apParamBean.strDescription}"
+                                                         disabled="#{apParamBean.blDisableInput}" maxlength="100">
+                                            <p:ajax event="keyup" update=":form_main:valueChange" listener="#{apParamBean.checkKeyupChangeValue()}"/>
+                                        </p:inputTextarea>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+
+                        <p:outputPanel id="pnl_control" >
+                            <div id="button" class="pnl" style="margin: 10px auto;">
+                                <p:outputPanel rendered="#{apParamBean.isDISABLE}">
+                                    <p:commandButton id="btn_add" styleClass="btn-margin" value="#{PP_SHARED.add}" rendered="#{apParamBean.getPermission('I')}" actionListener="#{apParamBean.changeStateAdd()}"
+                                                     update=":form_main:panel_center" icon="ui-icon-document" style="width:95px;"/>
+                                    <p:commandButton id="btn_copy" styleClass="btn-margin" value="#{PP_SHARED.copy}" rendered="#{apParamBean.getPermission('I')}" actionListener="#{apParamBean.changeStateCopy()}"
+                                                     update=":form_main:panel_center" icon="ui-icon-copy" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                                    <p:commandButton id="btn_edit" styleClass="btn-margin" value="#{PP_SHARED.edit}" rendered="#{apParamBean.getPermission('U')}" actionListener="#{apParamBean.changeStateEdit()}"
+                                                     update=":form_main:panel_center" icon="ui-icon-pencil" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                                    <p:commandButton id="btn_del" styleClass="btn-margin" value="#{PP_SHARED.del}" rendered="#{apParamBean.getPermission('D')}"
+                                                     oncomplete="confirmDialog.show()" icon="ui-icon-trash" disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                                    <p:commandButton id="btn_search" styleClass="btn-margin" value="#{PP_SHARED.search}" rendered="#{apParamBean.getPermission('S')}"
+                                                     update=":form_main:panel_center" actionListener="#{apParamBean.changeStateSearch}" icon="ui-icon-search"
+                                                     disabled="#{apParamBean.blDisableButtonOther}" style="width:95px;"/>
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{not apParamBean.isDISABLE}">
+                                    <p:commandButton id="btn_ok" styleClass="btn-margin" value="#{PP_SHARED.ok}" update=":grow_main_dt,:form_main:panel_center, form_main:valueChange" icon="ui-icon-check"
+                                                     action="#{apParamBean.handOK()}" style="width:95px;"/>
+                                    <p:commandButton id="btn_cancel" styleClass="btn-margin" value="#{PP_SHARED.back}" update=":form_main:" icon="ui-icon-arrowreturnthick-1-s" onstart="fixShadow();"
+                                                     action="#{apParamBean.handCancel()}"  onclick="bui.hide()" style="width:95px;"/>
+                                </p:outputPanel>
+                            </div>
+                        </p:outputPanel>
+                        <p:blockUI block="pnlTable" widgetVar="bui" id="blockui" blocked="#{apParamBean.blBlockUI}"/>
+                        <p:panel id="pnlTable" style="border:0px solid; padding: 0px !important;">
+                            <p:dataTable var="objApparam" value="#{apParamBean.listApparam}" selection="#{apParamBean.arrayApparamSelect}" style="width: 100%"
+                                         selectionMode="multiple" rowKey="#{objApparam.strParName}" id="datatable" paginator="true" rows="10" paginatorPosition="bottom"
+                                         rowsPerPageTemplate="5,10,15,#{apParamBean.listApparam.size()}"
+                                         styleClass="tableBoder">
+                                <p:ajax event="rowSelect" listener="#{apParamBean.onRowSelect}" update=":form_main:pnlInputHeader"/>
+                                <p:ajax event="rowDblselect" listener="#{apParamBean.changeStateEdit()}" update=":form_main:pnl_control,:form_main:pnlInputHeader, :form_main:blockui"/>
+                                <f:facet name="header">#{PP_MNGAPPARAM.headertable}</f:facet>
+                                <p:column headerText="#{PP_MNGAPPARAM.type}"  style="width: 10%">
+                                    <h:outputText value="#{objApparam.strParType}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_MNGAPPARAM.name}"  style="width:30%">
+                                    <h:outputText value="#{objApparam.strParName}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_MNGAPPARAM.value}" style="width:15%">
+                                    <h:outputText value="#{objApparam.strParValue}"/>
+                                </p:column>
+                                <p:column headerText="#{PP_MNGAPPARAM.description}" style="width:45%">
+                                    <h:outputText value="#{objApparam.strDescription}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </div>
+                </p:outputPanel>
+                <p:inputText id="valueChange" type="hidden" value="#{apParamBean.blValueChange}"/>
+                <input id="messageCloseBrowser" type="hidden" value="#{PP_MNGAPPARAM.messageCloseBrowser}"/>
+                <p:outputPanel id="confirm_delete">
+                    <p:confirmDialog styleClass="dialog_remove" id="confirmDialog" message="#{PP_MNGAPPARAM.confirm_delete}" header="#{PP_MNGAPPARAM.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                        <p:outputPanel layout="block" style="text-align:center">
+                            <p:commandButton icon="ui-icon-check" actionListener="#{apParamBean.handDelete}" id="confirm" value="#{PP_MNGAPPARAM.yes}"
+                                             update=":form_main:panel_center :grow_main_dt" oncomplete="confirmDialog.hide()" />
+                            <p:commandButton icon="ui-icon-close" type="button" styleClass="margin-left-2" id="decline" value="#{PP_MNGAPPARAM.no}" onclick="confirmDialog.hide()"
+                                             update=":form_main:panel_center"/>
+                        </p:outputPanel>
+                    </p:confirmDialog>
+                </p:outputPanel>
+                <p:confirmDialog styleClass="dialog_edit" id="confirmDialogEdit" message="#{PP_MNGAPPARAM.confirm_edit}" header="#{PP_MNGAPPARAM.edit_dialog_heade}" severity="alert" widgetVar="confirmDialogEdit" visible="#{apParamBean.blValueChange}">
+                    <p:outputPanel layout="block" style="text-align:center">
+                        <p:commandButton icon="ui-icon-check" actionListener="#{apParamBean.handOK()}" id="confirmEdit" value="#{PP_MNGAPPARAM.yes}"
+                                         update=":form_main:panel_center,:form_main:valueChange,:grow_main_dt" oncomplete="confirmDialogEdit.hide()" />
+                        <p:commandButton icon="ui-icon-close" styleClass="margin-left-2" id="declineEdit" value="#{PP_MNGAPPARAM.no}"  oncomplete="confirmDialogEdit.hide()"
+                                         update=":form_main:panel_center,:grow_main_dt,:form_main:valueChange" actionListener="#{apParamBean.functionBack()}"/>
+                    </p:outputPanel>
+                </p:confirmDialog>
+            </div>
+        </div>
+    </h:body>
+</html>

@@ -1,0 +1,54 @@
+/*
+    Document   : styleAttach
+    Created on : Jun 7, 2013, 2:48:20 PM
+    Author     : ThanhHN
+    Description:
+        Purpose of the stylesheet follows.
+*/
+.styleAttachDoc .ui-widget-header label{
+    color: #C4C4C4 !important;
+    background: #C4C4C4;
+    width: 100%;
+    text-shadow: none;
+}
+
+.styleAttachDoc .ui-widget-header{
+    border: none;
+    padding: 0px;
+    width: 28px;
+}
+.styleAttachDoc .ui-fileupload-buttonbar{
+    border: none !important;
+    padding: 0px !important;
+    width: 28px !important;
+}
+.styleAttachDoc .files{
+    margin: 0px !important;
+    display: none !important;
+}
+
+.styleAttachDoc .ui-fileupload-content{
+    margin: 0px !important;
+    display: none !important;
+}
+.styleAttachDoc .ui-button-text{display: none !important;}
+.styleAttachDoc .ui-fileupload-choose{
+    width: 30px !important;
+}
+
+.styleAttachDoc .ui-panelgrid{
+    border: none !important;
+    margin: 0px !important;
+}
+.styleAttachDoc .ui-panelgrid td, .ui-panelgrid tr{
+    padding: 0px !important;
+}
+.styleAttachDoc .ui-button-text-icon-left .ui-button-text .ui-fileupload-buttonbar{
+    padding: 0.2em 1em 0.2em 2.1em !important;
+}
+.styleAttachDoc div,
+.styleAttachDoc input,
+.styleAttachDoc button{
+    float: left;
+}
+

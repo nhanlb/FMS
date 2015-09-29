@@ -1,0 +1,135 @@
+/*
+    Document   : css-icon
+    Created on : Oct 8, 2012, 3:25:55 PM
+    Author     : rongnk
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.vietnam{
+    background-image: url('../images/vietnam.png') !important;
+    margin-right: 2px;
+}
+
+.english{
+    background-image: url('../images/england.png') !important;
+    margin-right: 2px;
+}
+.user{
+    background-image: url('../images/user.png') !important;
+    margin-right: 2px;
+}
+.group{
+    background-image: url('../images/group.png') !important;
+    margin-right: 2px;
+}
+.ui-icon.add{
+    background-image: url('../images/add.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.edit{
+    background-image: url('../images/edit.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.erase{
+    background-image: url('../images/erase.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.ok{
+    background-image: url('../images/ok.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.cancel{
+    background-image: url('../images/cancel.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.allday{
+    background-image: url('../images/24.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.work{
+    background-image: url('../images/work.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.relax{
+    background-image: url('../images/relax.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.all{
+    background-image: url('../images/all.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.content{
+    background-image: url('../images/content.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.module{
+    background-image: url('../images/module.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.gmodule{
+    background-image: url('../images/gmodule.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.copy{
+    background-image: url('../images/copy.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.return{
+    background-image: url('../images/return.png') !important;
+    background-position: 0 0 !important;
+}
+.ui-icon.search{
+    background-image: url('../images/search.png') !important;
+    background-position: 0 0 !important;
+}
+
+.icon-group{
+    background-image: url('../images/icon/icon-group.png') !important;
+    margin-right: 2px;
+}
+
+.ui-icon-folder-collapsed {
+    background-image: url('../images/icon/folder.png') !important;
+    background-position: 0 0 !important;
+}
+
+.ui-icon-folder-open {
+    background-image: url('../images/icon/folder-open.png') !important;
+    background-position: 0 0 !important;
+}
+
+.icon-attribute {
+    background-image: url('../images/icon/attribute.png') !important;
+    background-position: 0 0 !important;
+}
+
+.icon-attribute-used {
+    background-image: url('../images/icon/attribute-used.png') !important;
+    background-position: 0 0 !important;
+}
+
+.process-item {
+    background: url('../images/icon/narrow.gif') transparent no-repeat center left;
+    padding-left: 18px;
+}
+
+.icon-level {
+    background: url('../images/icon/narrow.gif') transparent no-repeat center left;
+    padding-left: 18px;
+}
+
+#breadcum .ui-icon-home{
+    width: 23px;
+    background: url('../images/icon/flag_vn.jpg') transparent no-repeat center left;
+    /*background-image: url('../images/narrow.gif') !important;//*/
+    background-position: 0 0 !important;
+    margin-top: 3px !important;
+}
+.ui-icon.download{
+    background-image: url('images/icons-png/download.png') !important;
+    background-position: 0 0 !important;
+}
+.icon-size{
+    width: 30px !important;
+}

@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_POSITION.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <p:panel id="panel_position" header="#{PP_POSITION.positionInfo}" styleClass="pnl-red" style=" margin-bottom: 10px;" >
+                        <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                            <p:outputLabel for="dept" value="#{PP_POSITION.deptId}" />
+                            <p:selectOneMenu id="dept" value="#{positionController.position.deptId}" disabled="#{positionController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_POSITION.msg_req_deptId}" filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{positionController.cboDepartment}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="position" value="#{PP_POSITION.position}" />
+                            <p:selectOneMenu id="position" value="#{positionController.position.position}" disabled="#{positionController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_POSITION.msg_req_position}" >
+                                <f:selectItem itemLabel=""/>
+                                <f:selectItems value="#{positionController.lstPositionType}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="coefficient" value="#{PP_POSITION.coefficient}" />
+                            <pe:inputNumber id="coefficient" value="#{positionController.position.coefficient}"
+                                            required="true" requiredMessage="#{PP_POSITION.msg_req_coefficient}"
+                                            decimalPlaces="2" disabled="#{positionController.isDISABLE}" decimalSeparator="," thousandSeparator=".">
+
+                            </pe:inputNumber>
+
+                            <p:outputLabel for="allowance" value="#{PP_POSITION.allowance}" />
+                            <pe:inputNumber id="allowance" value="#{positionController.position.allowance}"
+                                            required="true" requiredMessage="#{PP_POSITION.msg_req_allowance}"
+                                            decimalPlaces="0" disabled="#{positionController.isDISABLE}" decimalSeparator="," thousandSeparator=".">
+
+                            </pe:inputNumber>
+
+                            <p:outputLabel for="fromDate" value="#{PP_POSITION.startDate}" />
+                            <p:calendar id="fromDate" pattern="dd/MM/yyyy" value="#{positionController.position.startDate}" converterMessage="#{positionController.msg_Convert_startdate}"
+                                        required="true" requiredMessage="#{PP_POSITION.msg_req_startDate}"
+                                        styleClass="hasDatepicker" navigator="true" disabled="#{positionController.isDISABLE}">
+                                <p:ajax event="dateSelect" update="toDate" />
+                            </p:calendar>
+
+                            <p:outputLabel for="toDate" value="#{PP_POSITION.endDate}" />
+                            <p:calendar id="toDate" pattern="dd/MM/yyyy" value="#{positionController.position.endDate}" converterMessage="#{positionController.msg_Convert_endDate}"
+                                        mindate="#{positionController.position.startDate}"
+                                        styleClass="hasDatepicker" navigator="true" disabled="#{positionController.isDISABLE}">
+
+                            </p:calendar>
+
+                            <p:outputLabel for="status" value="#{PP_POSITION.status}" />
+                            <p:selectOneMenu id="status" value="#{positionController.position.status}" disabled="#{positionController.isDISABLE}"
+                                             required="true" requiredMessage="#{PP_POSITION.msg_req_status}">
+                                <f:selectItem itemLabel="" itemValue="" />
+                                <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:focus context=":form_main:panel_position" />
+                    </p:panel>
+
+                    <div id="box_control" class="pnl">
+                        <p:outputPanel id="pnl_control">
+                            <p:outputPanel rendered="#{not positionController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_add"/>
+                                <p:commandButton id="btn_add" rendered="#{positionController.getPermission('I')}" actionListener="#{positionController.changeStateAdd()}" process="@this" styleClass="btn-margin" value="#{PP_SHARED.add}" onclick="PF('tblPosition').clearFilters();" update="panel_center" icon="ui-icon-circle-plus" />
+                                <p:commandButton id="btn_copy" rendered="#{positionController.getPermission('I')}" actionListener="#{positionController.changeStateCopy()}" disabled="#{not positionController.isSelectedApp}" process="@this" onclick="PF('tblPosition').clearFilters();" styleClass="btn-margin btn-cyan" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                <p:commandButton id="btn_edit" rendered="#{positionController.getPermission('U')}" actionListener="#{positionController.changeStateEdit()}" disabled="#{not positionController.isSelectedApp}" process="@this" styleClass="btn-margin btn-yellow" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                <p:commandButton id="btn_del" rendered="#{positionController.getPermission('D')}" actionListener="#{positionController.changeStateDel()}" disabled="#{not positionController.isSelectedApp}" process="@this" styleClass="btn-margin btn-red" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{positionController.isDisplayBtnConfirm}">
+                                <p:defaultCommand target="btn_ok"/>
+                                <p:commandButton id="btn_ok" actionListener="#{positionController.handOK()}" process="@this :form_main:panel_position" styleClass="btn-margin btn-green" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                <p:commandButton id="btn_cancel" actionListener="#{positionController.handCancel()}" process="@this" styleClass="btn-margin back" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                    <p:resetInput target="panel_position" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                    </div>
+
+                    <p:panel header="#{PP_POSITION.position_list}" styleClass="pnl-blue" style="margin-top: 10px;"  >
+                        <p:dataTable paginatorPosition="bottom" paginatorAlwaysVisible="true" id="table_position" widgetVar="tblPosition" value="#{positionController.lstPosition}" var="position"
+                                     filteredValue="#{positionController.lstPositionFiltered}"
+                                     emptyMessage="#{PP_SHARED.empty_message}" disabledSelection="#{positionController.isDisplayBtnConfirm}" selectionMode="single"
+                                     rowKey="#{position.positionsRefId}" selection="#{positionController.mselectedPosition}"
+                                     rowIndexVar="stt"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     currentPageReportTemplate="(Bản ghi thứ: {startRecord} - {endRecord} trong {totalRecords}, Trang {currentPage}/{totalPages})"
+                                     rowsPerPageTemplate="5,10,15,#{positionController.lstPosition.size()}" paginator="true" rows="10" >
+
+                            <p:ajax event="rowSelect" process="@this" listener="#{positionController.onRowSelect}" update=":form_main:panel_position" />
+
+                            <p:column headerText="Stt">
+                                <h:outputText value="#{stt + 1}"/>
+                            </p:column>
+                            
+                            <p:column headerText="#{PP_POSITION.deptId}" filterBy="#{position.deptId}"
+                                      filterMatchMode="exact" width="150">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tblPosition').filter();" style="float: left !important;" filter="true" filterMatchMode="contains">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItems value="#{positionController.cboDepartment}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <ui:repeat value="#{positionController.cboDepartment}" var="item">
+                                    <h:outputText value="#{item.value}" rendered="#{positionController.integerToString(position.deptId) eq item.code}"/>
+                                </ui:repeat>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.position}" filterBy="#{position.position}"
+                                      filterMatchMode="exact" width="150" >
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tblPosition').filter();" style="float: left !important;" filter="true" filterMatchMode="contains">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItems value="#{positionController.lstPositionType}" var="item" itemValue="#{item.code}" itemLabel="#{item.value}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <ui:repeat value="#{positionController.lstPositionType}" var="item">
+                                    <h:outputText value="#{item.value}" rendered="#{position.position == item.code}"/>
+                                </ui:repeat>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.coefficient}" sortBy="#{position.coefficient}" filterBy="#{position.coefficient}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{position.coefficient}">
+                                    <f:convertNumber currencyCode="VND" locale="vi_VN"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.allowance}" sortBy="#{position.allowance}" filterBy="#{position.allowance}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{position.allowance}">
+                                    <f:convertNumber currencyCode="VND" locale="vi_VN"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.startDate}" sortBy="#{position.startDate}" filterBy="#{position.startDateView}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{position.startDateView}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.endDate}" sortBy="#{position.endDate}" filterBy="#{position.endDateView}" filterMaxLength="50" filterMatchMode="contains" >
+                                <h:outputText value="#{position.endDateView}"/>
+                            </p:column>
+
+                            <p:column headerText="#{PP_POSITION.status}" sortBy="#{position.status}" filterBy="#{position.status}"
+                                      filterMatchMode="exact" width="150" >
+                                <f:facet name="filter" >
+                                    <p:selectOneMenu onchange="PF('tblPosition').filter();" style="float: left !important;">
+                                        <f:selectItem itemLabel="#{PP_SHARED.select_one}" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.disable}" itemValue="0" />
+                                        <f:selectItem itemLabel="#{PP_SHARED.enable}" itemValue="1" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText styleClass="lbl-green" rendered="#{position.status eq '1'}" value="#{PP_SHARED.enable}" />
+                                <h:outputText styleClass="lbl-red" rendered="#{position.status ne '1'}" value="#{PP_SHARED.disable}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" appendTo=":form_main" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{positionController.handDelete}" oncomplete="PF('confirmDialog').hide();PF('tblPosition').clearFilters();" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+

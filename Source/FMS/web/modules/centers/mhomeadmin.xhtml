@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pm="http://primefaces.org/mobile"
+
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <style type="text/css" >
+                .ui-panel-m-content {
+                    padding: 10px !important;
+                }
+
+                .ui-panel-m .ui-panel-m-titlebar {
+                    background: #F2F2F2;
+                }
+            </style>
+
+            <pm:page id="page_main">
+                <h:form id="form_main" >
+                    <pm:header title="#{secuser.getUserLogged().userName}" fixed="true">
+                        <p:commandButton id="btn_menu" value="MENU" styleClass="ui-btn-left" icon="ui-icon-bullets" type="button" style="width: auto;"  />
+                    </pm:header>
+
+                    <pm:content>
+                        <ui:insert name="mmenu" />
+                        <!--//////////////////////Main page/////////////////////-->
+
+                        <!--/////////////////////////////////////////////////-->
+                    </pm:content> 
+                    <pm:footer fixed="true">
+                        <ui:include src="/usercontrols/mbottom.xhtml" />
+                    </pm:footer>
+                </h:form>
+            </pm:page>            
+        </ui:composition>
+    </h:body>
+</html>

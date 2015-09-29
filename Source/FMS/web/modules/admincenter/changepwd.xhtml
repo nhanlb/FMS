@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:panel header="#{PP_MNGGROUP.change_password}" style="width: 50%; margin: 0 auto" >
+                <p:panelGrid id="table_change_pwd" style="margin: 0 auto; width: 100%" columns="2">
+                    <p:outputLabel for="oldPassword" value="#{PP_MNGGROUP.old_password}" />
+                    <p:password value="#{func_systemuser.strOldPassword}" required="true" 
+                                requiredMessage="#{PP_MNGGROUP.old_password_is_empty}" id="oldPassword" />
+
+                    <p:outputLabel for="newPassword" value="#{PP_MNGGROUP.new_password}" />
+                    <p:password value="#{func_systemuser.strNewPassword}" required="true" 
+                                requiredMessage="#{PP_MNGGROUP.new_password_is_empty}" id="newPassword" />
+
+                    <p:outputLabel for="rePassword" value="#{PP_MNGGROUP.re_new_password}" />
+                    <p:password value="#{func_systemuser.strConfirmPassword}" required="true"
+                                requiredMessage="#{PP_MNGGROUP.re_new_password_is_empty}" id="rePassword" />
+
+                    <p:focus context="table_change_pwd" />
+                    <p:commandButton actionListener="#{func_systemuser.handChangePassword()}" style="width: auto;" icon="ui-icon-key" process="table_change_pwd" id="changePwdButton" value="#{PP_MNGGROUP.change_password}" update=":grow_main_dt table_change_pwd" />
+                </p:panelGrid>
+            </p:panel>
+        </ui:composition>
+    </h:body>
+</html>

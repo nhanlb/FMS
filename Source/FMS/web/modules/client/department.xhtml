@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>#{PP_DEPARTMENT.title}</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <p:outputPanel id="panel_center" >
+                <div style="width: 100%" >
+                    <div style="width: 24%; float: left; background: #E7E7E7;height: 1000px">
+                        <p:panelGrid style="width: 100%" columns="2" >
+                            <p:outputLabel for="module_search" value="#{PP_SHARED.search}:" />
+                            <p:autoComplete id="module_search" disabled="#{departmentController.isDisplayBtnConfirm}" minQueryLength="1" maxResults="10" queryDelay="500" value="#{departmentController.mstrDepartmentSearch}" completeMethod="#{departmentController.completeDepartmentSearch}" onfocus="this.select();" onmouseup="return false;" style="width: 100%;" >
+                                <p:ajax event="itemSelect" listener="#{departmentController.onDepartmentSearchSelect}" process="@this, module_search" update="panel_center" />
+                            </p:autoComplete>
+                        </p:panelGrid>
+                        <hr />
+                        <p:panel id="pnlTree" header="#{PP_DEPARTMENT.title}" >
+                            <p:tree value="#{departmentController.mroot}" id="tree"  var="node" dynamic="true" selectionMode="single"
+                                    selection="#{departmentController.mselectedNote}" animate="true" >
+                                <p:ajax event="select"  update=":form_main:panel_center" listener="#{departmentController.onTreeSelect}"/>
+                                <p:treeNode icon="#{node.deptType eq '1'?'ui-icon-folder-collapsed':'ui-icon-link'}" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                                    <h:outputText value="#{node.name}"/>
+                                </p:treeNode>
+                            </p:tree>
+                        </p:panel>
+
+                    </div>
+
+                    <div style="width: 75%;float: right">
+                        <p:panel id="panelAdd" header="#{PP_DEPARTMENT.departmentInfo}" style=" margin-bottom: 10px;" >
+                            <p:panelGrid style="width: 100%;" columnClasses="col1,col2,col3,col4" columns="4" >
+
+                                <p:outputLabel for="name" value="#{PP_DEPARTMENT.name}" />
+                                <p:inputText id="name" value="#{departmentController.department.name}" disabled="#{departmentController.isView}"
+                                             required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_name}" maxlength="200"/>
+
+                                <p:outputLabel for="code" value="#{PP_DEPARTMENT.deptCode}" />
+                                <p:inputText id="code" value="#{departmentController.department.deptCode}" disabled="#{departmentController.isView}"
+                                             required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_deptCode}" maxlength="50"/>
+
+                                <p:outputLabel for="phone" value="#{PP_DEPARTMENT.phone}" />
+                                <p:inputText maxlength="20" id="phone" value="#{departmentController.department.phone}" disabled="#{departmentController.isView}"
+                                             required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_phone}">
+                                    <pe:keyFilter regEx="/[\d\+]/"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="fax" value="#{PP_DEPARTMENT.fax}" />
+                                <p:inputText maxlength="20" id="fax" value="#{departmentController.department.fax}" disabled="#{departmentController.isView}">
+                                    <pe:keyFilter regEx="/[\d\+]/"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="contactWho" value="#{PP_DEPARTMENT.contactWho}" />
+                                <p:selectOneMenu  id="contactWho" value="#{departmentController.department.contactWho}" disabled="#{departmentController.isView}"
+                                                  >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItems value="#{departmentController.cboStaff}" itemValue=""/>
+                                </p:selectOneMenu >
+
+
+
+                                <p:outputLabel for="city" value="#{PP_DEPARTMENT.cityId}" />
+                                <p:selectOneMenu id="city" value="#{departmentController.department.cityId}" disabled="#{departmentController.isView}"
+                                                 required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_cityId}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItems value="#{departmentController.cboCity}" itemValue=""/>
+                                    <p:ajax event="change" process="@this" listener="#{departmentController.changCity}" update=":form_main:district,:form_main:ward" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="address" value="#{PP_DEPARTMENT.address}" />
+                                <p:inputText id="address" value="#{departmentController.department.address}" disabled="#{departmentController.isView}"
+                                             required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_address}" maxlength="255"/>
+
+                                <p:outputLabel for="district" value="#{PP_DEPARTMENT.districtId}" />
+                                <p:selectOneMenu id="district" value="#{departmentController.department.districtId}" disabled="#{departmentController.isView}"
+                                                 required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_districtId}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItems value="#{departmentController.cboDistrict}" itemValue=""/>
+                                    <p:ajax event="change"  process="@this" listener="#{departmentController.changDistrict()}" update="form_main:ward" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="workAddress" value="#{PP_DEPARTMENT.workAddress}" />
+                                <p:inputText id="workAddress" value="#{departmentController.department.workAddress}" disabled="#{departmentController.isView}"
+                                             required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_workAddress}" maxlength="255"/>
+
+
+                                <p:outputLabel for="ward" value="#{PP_DEPARTMENT.wardId}" />
+                                <p:selectOneMenu id="ward" value="#{departmentController.department.wardId}" disabled="#{departmentController.isView}"
+                                                 required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_wardId}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItems value="#{departmentController.cboWard}" itemValue=""/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="email" value="#{PP_DEPARTMENT.email}" />
+                                <p:inputText maxlength="100" id="email" value="#{departmentController.department.email}" disabled="#{departmentController.isView}"
+                                             validatorMessage="#{PP_DEPARTMENT.msg_cvert_email}">
+                                    <pe:keyFilter regEx="/[a-z0-9_\.\-@]/i"/>
+                                    <f:validateRegex pattern="[\w.-]+@[a-zA-Z_]+\.(([a-zA-Z])+\.?)+"/>
+                                </p:inputText>
+
+                                <p:outputLabel for="status" value="#{PP_DEPARTMENT.status}" />
+                                <p:selectOneMenu id="status" value="#{departmentController.department.status}" disabled="#{departmentController.isView}"
+                                                 required="true" requiredMessage="#{PP_DEPARTMENT.msg_req_status}" >
+                                    <f:selectItem itemValue="" itemLabel=""/>
+                                    <f:selectItem itemValue="0" itemLabel="#{PP_DEPARTMENT.status_cancel}" />
+                                    <f:selectItem itemValue="1" itemLabel="#{PP_DEPARTMENT.status_ok}" />
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid style="width: 100%" columnClasses="col2,col2" columns="2" >
+                                <p:outputLabel for="description" value="#{PP_DEPARTMENT.description}"/>
+                                <p:inputTextarea id="description" value="#{departmentController.department.description}" disabled="#{departmentController.isView}"
+                                                 cols="26" autoResize="true" rows="5"  style="min-height: 80px"  />
+
+                            </p:panelGrid>
+                            <p:focus context=":form_main:panelAdd" />
+                        </p:panel>
+
+                        <div id="box_control" class="pnl">
+                            <p:outputPanel id="pnl_control">
+                                <p:outputPanel rendered="#{not departmentController.isDisplayBtnConfirm}">
+                                    <p:commandButton id="btn_add" rendered="#{!departmentController.isDisplayBtnConfirm}" actionListener="#{departmentController.addDepartment()}" process="@this" styleClass="btn-margin btn-blue" value="#{PP_SHARED.add}" update="panel_center" icon="ui-icon-circle-plus" disabled="#{departmentController.department.deptType eq 0 or departmentController.department.deptId lt 0}"/>
+                                    <p:commandButton id="btn_copy" rendered="#{!departmentController.isDisplayBtnConfirm}" actionListener="#{departmentController.copyDepartment()}" disabled="#{not departmentController.isSelectedApp or departmentController.department.deptId eq 1 or departmentController.department.deptId lt 1}" process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.copy}" update="panel_center" icon="ui-icon-copy" />
+                                    <p:commandButton id="btn_edit" rendered="#{!departmentController.isDisplayBtnConfirm}" actionListener="#{departmentController.editDepartment()}" disabled="#{not departmentController.isSelectedApp or departmentController.department.deptId eq 1 or departmentController.department.deptId lt 1}" process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.edit}" update="panel_center" icon="ui-icon-pencil" />
+                                    <p:commandButton id="btn_del" rendered="#{!departmentController.isDisplayBtnConfirm}" actionListener="#{departmentController.preDeleteDepartment()}" disabled="#{not departmentController.isSelectedApp or departmentController.department.deptId eq 1 or departmentController.department.deptId lt 1}" process="@this" styleClass="btn-margin btn-boocdo" value="#{PP_SHARED.del}" oncomplete="PF('confirmDialog').show()" icon="ui-icon-trash" />
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{departmentController.isDisplayBtnConfirm}">
+                                    <p:commandButton id="btn_ok" actionListener="#{departmentController.saveDepartment()}" process="@this :form_main:panelAdd" styleClass="btn-margin btn-blue" value="#{PP_SHARED.ok}" update="panel_center :grow_main_dt" icon="ui-icon ui-icon-circle-check" />
+                                    <p:commandButton id="btn_cancel" actionListener="#{departmentController.backDepartment()}" process="@this" styleClass="btn-margin btn-grey" value="#{PP_SHARED.back}" update="panel_center" icon="ui-icon-circle-arrow-w"  >
+                                        <p:resetInput target="panelAdd" />
+                                    </p:commandButton>
+                                </p:outputPanel>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear" />
+            </p:outputPanel>
+
+            <p:confirmDialog styleClass="shadowfix" id="confirmDialog" message="#{PP_SHARED.confirm_delete}" header="#{PP_SHARED.delete_dialog_header}" severity="alert" widgetVar="confirmDialog">
+                <p:commandButton icon="ui-icon-circle-check" styleClass="btn-red" process="@this" id="confirm" value="#{PP_SHARED.yes}" update=":form_main:panel_center :grow_main_dt" actionListener="#{departmentController.deleteDepartment()}" oncomplete="PF('confirmDialog').hide()" />
+                <p:commandButton icon="ui-icon-circle-close" type="button" styleClass="btn-margin back" id="decline" value="#{PP_SHARED.no}" onclick="PF('confirmDialog').hide()" />
+            </p:confirmDialog>
+
+        </ui:composition>
+    </h:body>
+</html>
+
